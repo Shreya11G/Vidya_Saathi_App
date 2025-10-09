@@ -1,0 +1,16 @@
+# Ignore node_modules in frontend and backend
+/client/node_modules/
+/server/node_modules/
+
+# Ignore environment variables
+/client/.env
+/server/.env
+
+# Ignore build/dist folders
+/client/build/
+/server/dist/
+# Logs
+*.log
+
+# macOS files
+.DS_Store
