@@ -13,12 +13,18 @@ This project is **actively being enhanced** with additional features and technol
 ---
 
 ## Features
-- AI-powered tutoring and career guidance using **Gemini API**.
-- Personalized learning paths and progress tracking.
-- Secure authentication using **JWT with HTTP-only cookies**.
-- Modular, user-centric interface with minimal typing and large dashboard controls.
-- Backend built with **Node.js** and **Express.js**; data stored in **MongoDB**.
-- Designed for accessibility in **low-bandwidth environments**.
+
+- **Dashboard** – View and track your personalized learning progress.  
+- **AI Tutor** – Get instant explanations and guidance on any topic.  
+- **Career Guidance** – Receive AI-based career insights and skill suggestions.  
+- **Tasks & To-Do Manager** – Organize and manage your daily tasks and goals.  
+- **Notes Section** – Add short personal notes for quick reminders (not study material).  
+- **Pomodoro Timer** – Stay productive with structured study and break intervals.  
+- **Streak Tracker** – Maintain consistency by tracking daily learning streaks.  
+- **Link Manager** – Save and organize useful study links and resources.  
+- **Paragraph Writer** – Track characters, words, and lines in your text.  
+- **Quiz Time** – Upload documents or PDFs to generate interactive quizzes.  
+- **Memory Game** – Boost concentration and recall through fun memory challenges.  
 
 ---
 
@@ -82,29 +88,27 @@ npm run dev
 
 ---
 
-## Usage
+## 📘 Usage
 
-* Sign up / log in to access your dashboard.
-* Explore AI tutoring and career guidance.
-* Track your learning progress and personalized study plans.
-
----
-
-## Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests to enhance features, performance, and scalability.
-
----
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
+- **Sign Up / Log In** – Create an account or log in to access your personalized dashboard.  
+- **Access Dashboard** – View your learning stats, tasks, and streaks in one place.  
+- **Use AI Tutor** – Ask questions and get instant explanations to improve understanding.  
+- **Get Career Guidance** – Explore AI-generated career paths and recommended skills.  
+- **Add Tasks** – Create and manage your daily learning or personal goals.  
+- **Write Notes** – Save short reminders or quick points for future reference.  
+- **Use Pomodoro Timer** – Stay focused with timed study and break sessions.  
+- **Track Streaks** – Build consistency by maintaining your daily activity streak.  
+- **Save Links** – Store and manage useful learning or project-related links.  
+- **Use Paragraph Writer** – Monitor your text’s character, word, and line count.  
+- **Generate Quizzes** – Upload eBooks or PDFs to automatically create quizzes and test yourself.  
+- **Play Memory Game** – Enhance focus and memory retention through quick exercises.  
 
 ---
 
 ## Screenshots
 
-<img width="1900" height="905" alt="image" src="https://github.com/user-attachments/assets/6ed52743-3443-4dc0-8472-76fb71ba375e" />
+<img width="1895" height="907" alt="image" src="https://github.com/user-attachments/assets/7f981b15-8e08-4d5d-be30-33fcfbebac55" />
+
 
 
 ```
