@@ -40,7 +40,7 @@ const QuizResult = () => {
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}m ${secs}s`;
+     return `${minutes}m ${secs.toString().padStart(2,'0')}s`;
   };
 
   const getPerformanceMessage = () => {

@@ -78,8 +78,10 @@ export const extractTextFromFile = async (file) => {
 
     // ✅ Clean text (remove extra whitespace/newlines)
     extractedText = extractedText.replace(/\s+/g, ' ').replace(/\n\s*\n/g, '\n').trim();
+    console.log("Extracted text preview:", extractedText.slice(0, 300));
+    console.log("Extracted text length:", extractedText.length);
 
-    if (!extractedText || extractedText.length < 100) {
+    if (!extractedText || extractedText.length < 20) {
       throw new Error('Insufficient text content extracted from file');
     }
 

@@ -25,7 +25,9 @@ const QuizSetup = () => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  const estimatedTime = Math.round((selectedCount * 60) / 60);
+const timePerQuestion = 60; // seconds
+const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
+
 
   const handleStartQuiz = async () => {
     setIsStarting(true);
@@ -54,6 +56,8 @@ const QuizSetup = () => {
             timePerQuestion: response.data.data.timePerQuestion,
           },
         });
+        if(selectedCount > totalQuestions) setSelectedCount(totalQuestions);
+
       }
     } catch (error) {
       console.error('Start quiz error:', error);

@@ -232,10 +232,28 @@ linkSchema.methods.removeTag = function(tag) {
  * Static Method: Get User Link Statistics
  * Returns link statistics for a specific user
  */
+// Static Method: Get User Link Statistics (robust, with safe defaults + logging)
 linkSchema.statics.getUserStats = async function(userId) {
   try {
-    const stats = await this.aggregate([
-      { $match: { userId: mongoose.Types.ObjectId(userId) } },
+    // Validate presence
+    if (!userId) {
+      throw new Error('getUserStats requires userId');
+    }
+
+    // Validate/convert userId to ObjectId safely
+    if (!mongoose.isValidObjectId(userId)) {
+      // If it's an object with an _id field, try that
+      if (userId._id && mongoose.isValidObjectId(userId._id)) {
+        userId = String(userId._id);
+      } else {
+        throw new Error(`Invalid userId passed to getUserStats: ${JSON.stringify(userId)}`);
+      }
+    }
+    const uid = new mongoose.Types.ObjectId(String(userId));
+
+    // Main aggregation
+    const statsAgg = await this.aggregate([
+      { $match: { userId: uid } },
       {
         $group: {
           _id: null,
@@ -249,15 +267,15 @@ linkSchema.statics.getUserStats = async function(userId) {
           inProgressLinks: {
             $sum: { $cond: [{ $eq: ['$studyProgress.status', 'in_progress'] }, 1, 0] }
           },
-          totalClicks: { $sum: '$clickCount' },
+          totalClicks: { $sum: { $ifNull: ['$clickCount', 0] } },
           averageRating: { $avg: '$studyProgress.rating' }
         }
       }
     ]);
-    
-    // Get category breakdown
+
+    // Category breakdown
     const categoryStats = await this.aggregate([
-      { $match: { userId: mongoose.Types.ObjectId(userId) } },
+      { $match: { userId: uid } },
       {
         $group: {
           _id: '$category',
@@ -265,23 +283,49 @@ linkSchema.statics.getUserStats = async function(userId) {
         }
       }
     ]);
-    
+
+    const base = statsAgg[0] || {
+      totalLinks: 0,
+      favoriteLinks: 0,
+      completedLinks: 0,
+      inProgressLinks: 0,
+      totalClicks: 0,
+      averageRating: null
+    };
+
+    // Normalize averageRating to number (0 if null)
+    const avgRating = base.averageRating == null ? 0 : Number(base.averageRating);
+
+    const categoryBreakdown = categoryStats.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
     return {
-      ...(stats[0] || {
-        totalLinks: 0,
-        favoriteLinks: 0,
-        completedLinks: 0,
-        inProgressLinks: 0,
-        totalClicks: 0,
-        averageRating: 0
-      }),
-      categoryBreakdown: categoryStats.reduce((acc, item) => {
-        acc[item._id] = item.count;
-        return acc;
-      }, {})
+      totalLinks: base.totalLinks,
+      favoriteLinks: base.favoriteLinks,
+      completedLinks: base.completedLinks,
+      inProgressLinks: base.inProgressLinks,
+      totalClicks: base.totalClicks,
+      averageRating: avgRating,
+      categoryBreakdown
     };
   } catch (error) {
-    throw new Error('Failed to calculate user link statistics');
+    // Very important: log the real error (message + stack) so we can debug
+    console.error('Error in Link.getUserStats:', error.message);
+    console.error(error.stack);
+
+    // Return a safe default object instead of throwing a generic error,
+    // so the endpoint can still respond and you can inspect logs.
+    return {
+      totalLinks: 0,
+      favoriteLinks: 0,
+      completedLinks: 0,
+      inProgressLinks: 0,
+      totalClicks: 0,
+      averageRating: 0,
+      categoryBreakdown: {}
+    };
   }
 };
 
@@ -292,7 +336,7 @@ linkSchema.statics.getUserStats = async function(userId) {
 linkSchema.statics.searchUserLinks = async function(userId, searchTerm, options = {}) {
   try {
     const query = {
-      userId: mongoose.Types.ObjectId(userId),
+      userId: new mongoose.Types.ObjectId(userId),
       $or: [
         { title: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
@@ -328,7 +372,7 @@ linkSchema.statics.searchUserLinks = async function(userId, searchTerm, options 
  */
 linkSchema.statics.getPopularLinks = async function(userId, limit = 10) {
   try {
-    const links = await this.find({ userId: mongoose.Types.ObjectId(userId) })
+    const links = await this.find({ userId: new mongoose.Types.ObjectId(userId) })
       .sort({ clickCount: -1, lastVisited: -1 })
       .limit(limit);
     

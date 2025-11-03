@@ -295,5 +295,33 @@ noteSchema.index({ userId: 1, isArchived: 1 });
 noteSchema.index({ userId: 1, category: 1 });
 noteSchema.index({ title: 'text', content: 'text', tags: 'text' });
 
+// Calculate user note statistics
+noteSchema.statics.getUserStats = async function (userId) {
+  const stats = await this.aggregate([
+    { $match: { userId } },
+    {
+      $group: {
+        _id: null,
+        totalNotes: { $sum: 1 },
+        pinnedNotes: { $sum: { $cond: ['$isPinned', 1, 0] } },
+        favoriteNotes: { $sum: { $cond: ['$isFavorite', 1, 0] } },
+        archivedNotes: { $sum: { $cond: ['$isArchived', 1, 0] } },
+      },
+    },
+  ]);
+
+  if (stats.length === 0) {
+    return {
+      totalNotes: 0,
+      pinnedNotes: 0,
+      favoriteNotes: 0,
+      archivedNotes: 0,
+    };
+  }
+
+  return stats[0];
+};
+
+
 // Export the Note model
 export default mongoose.model('Note', noteSchema);

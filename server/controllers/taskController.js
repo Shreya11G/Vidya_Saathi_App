@@ -1,6 +1,8 @@
 import { validationResult } from 'express-validator';
 import Task from '../models/Task.js';
 import User from '../models/User.js';
+import mongoose from 'mongoose';
+
 
 /**
  * Task Controller
@@ -378,7 +380,7 @@ export const getTaskStats = async (req, res) => {
     
     // Get category breakdown
     const categoryStats = await Task.aggregate([
-      { $match: { userId: req.user._id } },
+      { $match: { userId: new mongoose.Types.ObjectId(req.user._id) } },
       {
         $group: {
           _id: '$category',

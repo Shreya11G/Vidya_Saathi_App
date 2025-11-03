@@ -14,71 +14,39 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-/**
- * Quiz Time Component
- * Allows users to upload documents (Word, PPT, PDF) and generates quiz questions
- * Features: File upload, AI-generated questions, live scoring, results storage
- */
-
 const QuizTime = () => {
-  // State for file upload
   const [selectedFile, setSelectedFile] = useState(null);
-  
-  // State for quiz questions generated from uploaded file
   const [quizQuestions, setQuizQuestions] = useState([]);
-  
-  // State for user's answers during quiz
   const [userAnswers, setUserAnswers] = useState([]);
-  
-  // State for current question index (0-based)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  
-  // State to track quiz progress and status
   const [quizStatus, setQuizStatus] = useState('upload');
-  
-  // State for quiz results after completion
   const [quizResult, setQuizResult] = useState(null);
-  
-  // State for loading indicators
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // State for quiz timer
   const [startTime, setStartTime] = useState(null);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  
-  // Ref for file input element
+
   const fileInputRef = useRef(null);
-  
-  // Timer interval ref for cleanup
   const timerRef = useRef(null);
 
-  // Supported file types for upload
   const supportedFileTypes = [
     'application/pdf',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-    'application/msword', // .doc
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
-    'application/vnd.ms-powerpoint' // .ppt
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.ms-powerpoint'
   ];
 
-  /**
-   * Handle file selection from input
-   * Validates file type and size before setting selected file
-   */
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
-    
     if (!file) return;
 
-    // Validate file type
     if (!supportedFileTypes.includes(file.type)) {
       toast.error('Please upload a Word document, PowerPoint presentation, or PDF file');
       return;
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       toast.error('File size must be less than 10MB');
       return;
@@ -88,9 +56,6 @@ const QuizTime = () => {
     toast.success('File selected successfully');
   };
 
-  /**
-   * Handle drag and drop file upload
-   */
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -99,23 +64,14 @@ const QuizTime = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      
-      // Create a synthetic event to reuse existing validation logic
-      const syntheticEvent = {
-        target: { files: [file] }
-      };
-      
+      const syntheticEvent = { target: { files: [file] } };
       handleFileSelect(syntheticEvent);
     }
   };
 
-  /**
-   * Generate quiz questions from uploaded file
-   */
   const generateQuiz = async () => {
     if (!selectedFile) {
       toast.error('Please select a file first');
@@ -134,7 +90,7 @@ const QuizTime = () => {
       });
 
       const questions = response.data.data.questions;
-      
+
       if (!questions || questions.length === 0) {
         throw new Error('No questions could be generated from this file');
       }
@@ -142,7 +98,6 @@ const QuizTime = () => {
       setQuizQuestions(questions);
       setQuizStatus('ready');
       toast.success(`Generated ${questions.length} questions successfully!`);
-      
     } catch (error) {
       console.error('Failed to generate quiz:', error);
       const errorMessage = error.response?.data?.message || 'Failed to generate quiz questions';
@@ -153,35 +108,29 @@ const QuizTime = () => {
     }
   };
 
-  /**
-   * Start the quiz
-   */
   const startQuiz = () => {
     setQuizStatus('in-progress');
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
     setStartTime(new Date());
-    
+
     timerRef.current = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
+      setTimeElapsed((prev) => prev + 1);
     }, 1000);
   };
 
-  /**
-   * Handle answer selection
-   */
   const handleAnswerSelect = (selectedOption) => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
     const isCorrect = selectedOption === currentQuestion.correctAnswer;
-    
+
     const answer = {
       questionId: currentQuestion.id,
       selectedOption,
       isCorrect
     };
 
-    setUserAnswers(prev => {
-      const existingAnswerIndex = prev.findIndex(a => a.questionId === currentQuestion.id);
+    setUserAnswers((prev) => {
+      const existingAnswerIndex = prev.findIndex((a) => a.questionId === currentQuestion.id);
       if (existingAnswerIndex >= 0) {
         const newAnswers = [...prev];
         newAnswers[existingAnswerIndex] = answer;
@@ -194,7 +143,7 @@ const QuizTime = () => {
 
   const goToNextQuestion = () => {
     if (currentQuestionIndex < quizQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
     } else {
       completeQuiz();
     }
@@ -202,23 +151,20 @@ const QuizTime = () => {
 
   const goToPreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
-  /**
-   * Complete the quiz
-   */
   const completeQuiz = async () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
 
-    const correctAnswers = userAnswers.filter(answer => answer.isCorrect).length;
+    const correctAnswers = userAnswers.filter((answer) => answer.isCorrect).length;
     const totalQuestions = quizQuestions.length;
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
-    
+
     const result = {
       score: correctAnswers,
       totalQuestions,
@@ -240,7 +186,7 @@ const QuizTime = () => {
         timeSpent: timeElapsed,
         answers: userAnswers
       });
-      
+
       toast.success('Quiz completed and results saved!');
     } catch (error) {
       console.error('Failed to save quiz results:', error);
@@ -248,9 +194,6 @@ const QuizTime = () => {
     }
   };
 
-  /**
-   * Reset quiz
-   */
   const resetQuiz = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -265,7 +208,7 @@ const QuizTime = () => {
     setQuizResult(null);
     setStartTime(null);
     setTimeElapsed(0);
-    
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -280,35 +223,36 @@ const QuizTime = () => {
   const getFileIcon = (fileName) => {
     const extension = fileName.split('.').pop()?.toLowerCase();
     switch (extension) {
-      case 'pdf': return '📄';
+      case 'pdf':
+        return '📄';
       case 'doc':
-      case 'docx': return '📝';
+      case 'docx':
+        return '📝';
       case 'ppt':
-      case 'pptx': return '📊';
-      default: return '📁';
+      case 'pptx':
+        return '📊';
+      default:
+        return '📁';
     }
   };
 
   const getCurrentAnswer = () => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
-    const answer = userAnswers.find(a => a.questionId === currentQuestion?.id);
+    const answer = userAnswers.find((a) => a.questionId === currentQuestion?.id);
     return answer ? answer.selectedOption : null;
   };
 
   return (
     <div className="space-y-6">
-     {/* Header */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Quiz Time
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Quiz Time</h1>
           <p className="text-gray-600 dark:text-gray-400">
             Upload documents and test your knowledge with AI-generated quizzes
           </p>
         </div>
-        
-        {/* Reset Button - Show when not in upload state */}
+
         {quizStatus !== 'upload' && (
           <button
             onClick={resetQuiz}
@@ -319,6 +263,10 @@ const QuizTime = () => {
           </button>
         )}
       </div>
+
+      {/* --- Upload, Generating, Ready, In-progress, and Completed states below remain same --- */}
+      {/* I will keep them unchanged since you said “write things as it is don’t change functionality” */}
+      {/* Full JSX retained (same as your TSX), just without types */}
 
       {/* Upload State */}
       {quizStatus === 'upload' && (
@@ -331,8 +279,6 @@ const QuizTime = () => {
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Upload a Word document, PowerPoint presentation, or PDF file to generate quiz questions
             </p>
-
-            {/* File Upload Area */}
             <div
               className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
               onDragOver={handleDragOver}
@@ -346,15 +292,11 @@ const QuizTime = () => {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              
+
               {selectedFile ? (
                 <div className="text-center">
-                  <div className="text-4xl mb-2">
-                    {getFileIcon(selectedFile.name)}
-                  </div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {selectedFile.name}
-                  </p>
+                  <div className="text-4xl mb-2">{getFileIcon(selectedFile.name)}</div>
+                  <p className="font-medium text-gray-900 dark:text-white">{selectedFile.name}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
@@ -372,7 +314,6 @@ const QuizTime = () => {
               )}
             </div>
 
-            {/* Generate Quiz Button */}
             {selectedFile && (
               <button
                 onClick={generateQuiz}
@@ -395,8 +336,7 @@ const QuizTime = () => {
           </div>
         </div>
       )}
-
-      {/* Generating State */}
+  {/* Generating State */}
       {quizStatus === 'generating' && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
           <LoadingSpinner size="large" />
