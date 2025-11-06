@@ -3,7 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FileText, Clock, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api/axios';
+
 
 const QuizSetup = () => {
   const location = useLocation();

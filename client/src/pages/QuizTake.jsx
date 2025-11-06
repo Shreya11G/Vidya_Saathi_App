@@ -10,7 +10,9 @@ import {
   Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api/axios';
+
 
 const QuizTake = () => {
   const location = useLocation();

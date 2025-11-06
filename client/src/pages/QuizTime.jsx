@@ -10,7 +10,9 @@ import {
   RotateCcw,
   Download
 } from 'lucide-react';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api/api';
+
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -85,15 +87,36 @@ const QuizTime = () => {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      const response = await axios.post('/quiz/generate', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+const response = await api.post('/quiz/generate', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
 
-      const questions = response.data.data.questions;
 
-      if (!questions || questions.length === 0) {
-        throw new Error('No questions could be generated from this file');
-      }
+
+
+     console.log("Raw backend response:", response.data);
+
+let questions = [];
+
+// Handle the three most common backend formats safely
+if (Array.isArray(response.data.data)) {
+  // ✅ Case 1: backend returns array directly inside data
+  questions = response.data.data;
+} else if (response.data.data?.questions) {
+  // ✅ Case 2: backend returns nested { data: { questions: [...] } }
+  questions = response.data.data.questions;
+} else if (Array.isArray(response.data.questions)) {
+  // ✅ Case 3: backend returns { questions: [...] }
+  questions = response.data.questions;
+}
+
+console.log("Extracted questions:", questions);
+
+if (!questions || questions.length === 0) {
+  toast.error("No questions could be generated — backend may have returned empty data.");
+  return;
+}
+
 
       setQuizQuestions(questions);
       setQuizStatus('ready');
@@ -178,7 +201,7 @@ const QuizTime = () => {
     setQuizStatus('completed');
 
     try {
-      await axios.post('/quiz/results', {
+      await api.post('/quiz/results', {
         fileName: selectedFile?.name,
         score: correctAnswers,
         totalQuestions,

@@ -172,6 +172,7 @@ console.log("Raw Gemini response sample:", aiResponse.slice(0));
         fileName: req.file.originalname,
         fileSize: req.file.size,
         totalQuestions: formattedQuestions.length,
+        questions: formattedQuestions, // ✅ Added this line
         message:
           "✅ Quiz generated successfully! You can now select the number of questions to attempt.",
       },
@@ -376,7 +377,6 @@ export const submitQuiz = async (req, res) => {
     if (!quizResults.has(userId)) {
       quizResults.set(userId, []);
     }
-
     const userResults = quizResults.get(userId);
     userResults.push(quizResult);
 
