@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import rehypeSanitize from "rehype-sanitize";
+import "highlight.js/styles/github-dark.css"; // we can use "github.css" for light mode
+
+
+
 import {
 Plus,
 Send,
@@ -27,8 +34,11 @@ const messagesEndRef = useRef(null);
 const messageInputRef = useRef(null);
 
 const scrollToBottom = () => {
-messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, 100);
 };
+
 
 useEffect(() => {
 scrollToBottom();
@@ -43,12 +53,15 @@ try {
 setHistoryLoading(true);
 const response = await axios.get('/ai/history?type=tutor');
 const sessions = response.data.data.history.map((item, index) => ({
-id: `session-${index}`,
-title: item.question.substring(0, 50) + '...',
-lastMessage: item.response.substring(0, 100) + '...',
-timestamp: new Date(item.timestamp),
-messageCount: 2
+  id: `session-${index}`,
+  title: item.question.substring(0, 50) + '...',
+  lastMessage: item.response.substring(0, 100) + '...',
+  question: item.question,
+  response: item.response,
+  timestamp: new Date(item.timestamp),
+  messageCount: 2
 }));
+
 setChatHistory(sessions);
 } catch (error) {
 console.error('Failed to fetch chat history:', error);
@@ -155,6 +168,29 @@ minute: '2-digit'
 });
 };
 
+const loadChatFromHistory = (session) => {
+    setActiveSessionId(session.id);
+
+    // Build a message pair: user question + AI response
+    const loadedMessages = [
+      {
+        id: `user-${Date.now()}-history`,
+        type: 'user',
+        content: session.question || session.title || 'Previous question',
+        timestamp: new Date(session.timestamp),
+      },
+      {
+        id: `ai-${Date.now()}-history`,
+        type: 'assistant',
+        content: session.response || session.lastMessage || 'No previous answer available.',
+        timestamp: new Date(session.timestamp),
+      },
+    ];
+
+    setMessages(loadedMessages);
+    scrollToBottom(); // Optional: scroll down after loading
+  };
+
 return ( <div className="flex h-[calc(100vh-8rem)] bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 {/* Sidebar */} <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"> <div className="p-4 border-b border-gray-200 dark:border-gray-700"> <div className="flex items-center justify-between mb-4"> <h2 className="text-lg font-semibold text-gray-900 dark:text-white">AI Tutor</h2> <Bot className="w-6 h-6 text-blue-500" /> </div> <button
          onClick={startNewChat}
@@ -194,7 +230,8 @@ return ( <div className="flex h-[calc(100vh-8rem)] bg-white dark:bg-gray-900 rou
                   ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
-              onClick={() => setActiveSessionId(session.id)}
+              onClick={() => loadChatFromHistory(session)}
+
             >
               <div className="flex items-start space-x-2">
                 <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
@@ -268,28 +305,53 @@ return ( <div className="flex h-[calc(100vh-8rem)] bg-white dark:bg-gray-900 rou
         </div>
       ) : (
         messages.map((message) => (
-          <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div
+            key={message.id}
+            className={`flex w-full px-2 sm:px-4 ${
+              message.type === 'user' ? 'justify-end' : 'justify-start'
+            }`}
+          >
             <div
-              className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                message.type === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-              }`}
+              className={`rounded-2xl px-4 py-3 break-words shadow-sm transition-all duration-200
+                ${
+                  message.type === 'user'
+                    ? 'bg-blue-600 text-white self-end max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%]'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white self-start max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%]'
+                }`}
             >
               <div className="flex items-start space-x-2">
-                {message.type === 'assistant' && <Bot className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />}
-                {message.type === 'user' && <User className="w-5 h-5 text-white mt-1 flex-shrink-0" />}
-                <div className="flex-1">
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                  <p className={`text-xs mt-2 ${
-                    message.type === 'user' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
-                  }`}>
+                {message.type === 'assistant' && (
+                  <Bot className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0 hidden sm:block" />
+                )}
+                {message.type === 'user' && (
+                  <User className="w-5 h-5 text-white mt-1 flex-shrink-0 hidden sm:block" />
+                )}
+               <div
+                className={`max-w-full overflow-x-auto prose prose-sm sm:prose-base dark:prose-invert leading-relaxed ${
+                  message.type === "assistant"
+                    ? "text-gray-900 dark:text-gray-100" // ✅ removed background color
+                    : "text-white"
+                }`}
+              >
+                <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+
+
+                  <p
+                    className={`text-[10px] sm:text-xs mt-2 ${
+                      message.type === 'user'
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
+                    }`}
+                  >
                     {formatTime(message.timestamp)}
                   </p>
                 </div>
               </div>
             </div>
-          </div>
+          
         ))
       )}
 

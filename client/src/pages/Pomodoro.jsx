@@ -11,106 +11,242 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
+const STORAGE_KEYS = {
+  MODE: 'pomodoro.mode',
+  IS_RUNNING: 'pomodoro.isRunning',
+  END_AT: 'pomodoro.endAt',            // ms timestamp
+  SETTINGS: 'pomodoro.settings',
+  COMPLETED: 'pomodoro.completed',
+  TOTAL_WORK: 'pomodoro.totalWork',
+};
+
 const Pomodoro = () => {
   const { user } = useAuth();
-  
-  // Timer state
-  const [mode, setMode] = useState('work');
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [completedSessions, setCompletedSessions] = useState(0);
-  const [totalWorkTime, setTotalWorkTime] = useState(0);
-  
-  // Settings state
-  const [settings, setSettings] = useState({
-    workDuration: user?.preferences?.pomodoroSettings?.workDuration || 25,
-    shortBreakDuration: 5,
-    longBreakDuration: 15,
-    longBreakInterval: 4,
+
+  // ----- Settings (persisted) -----
+  const defaultSettings = {
+    workDuration: user?.preferences?.pomodoroSettings?.workDuration || 25, // minutes
+    shortBreakDuration: 5,  // minutes
+    longBreakDuration: 15,  // minutes
+    longBreakInterval: 4,   // sessions
     autoStartBreaks: false,
     autoStartWork: false,
-    soundEnabled: true
+    soundEnabled: true,
+  };
+
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
   });
-  
+
+  // ----- Mode / Timer state (persisted) -----
+  const [mode, setMode] = useState(() => localStorage.getItem(STORAGE_KEYS.MODE) || 'work');
+  const [isRunning, setIsRunning] = useState(() => localStorage.getItem(STORAGE_KEYS.IS_RUNNING) === 'true');
+
+  // When running, we rely on absolute end time
+  const [endAt, setEndAt] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.END_AT);
+    return saved ? parseInt(saved, 10) : null;
+  });
+
+  const [timeLeft, setTimeLeft] = useState(0); // seconds, derived from endAt
+  const [completedSessions, setCompletedSessions] = useState(() =>
+    parseInt(localStorage.getItem(STORAGE_KEYS.COMPLETED) || '0', 10)
+  );
+  const [totalWorkTime, setTotalWorkTime] = useState(() =>
+    parseInt(localStorage.getItem(STORAGE_KEYS.TOTAL_WORK) || '0', 10)
+  );
+
   const [showSettings, setShowSettings] = useState(false);
-  const intervalRef = useRef(null);
   const audioRef = useRef(null);
+  const tickRef = useRef(null); // interval id
+
+  // ----- Helpers -----
+  const minutesToSeconds = (m) => Math.max(1, Math.floor(m)) * 60;
+
+  const getDurationForMode = (m) => {
+    switch (m) {
+      case 'work': return minutesToSeconds(settings.workDuration);
+      case 'shortBreak': return minutesToSeconds(settings.shortBreakDuration);
+      case 'longBreak': return minutesToSeconds(settings.longBreakDuration);
+      default: return minutesToSeconds(settings.workDuration);
+    }
+  };
+
+  const computeTimeLeft = (deadline) => {
+    if (!deadline) return getDurationForMode(mode);
+    return Math.max(0, Math.round((deadline - Date.now()) / 1000));
+  };
+
+  // ----- Persist settings whenever they change -----
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  }, [settings]);
+
+  // ----- Request notification permission once -----
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+  }, []);
+
+  // ----- On mount, derive timeLeft from endAt; also on visibility change -----
+  useEffect(() => {
+    const recalc = () => {
+      if (isRunning && endAt) {
+        setTimeLeft(computeTimeLeft(endAt));
+      } else {
+        // not running -> show full duration for current mode
+        setTimeLeft(getDurationForMode(mode));
+      }
+    };
+    recalc();
+
+    const onVisibility = () => recalc();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once
+
+  // ----- Keep localStorage in sync for mode/isRunning/endAt -----
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.MODE, mode);
+  }, [mode]);
 
   useEffect(() => {
-    const duration = getDurationForMode(mode);
-    setTimeLeft(duration * 60);
-  }, [mode, settings]);
+    localStorage.setItem(STORAGE_KEYS.IS_RUNNING, String(isRunning));
+  }, [isRunning]);
 
   useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleTimerComplete();
-            return 0;
-          }
-          return prev - 1;
+    if (endAt) localStorage.setItem(STORAGE_KEYS.END_AT, String(endAt));
+    else localStorage.removeItem(STORAGE_KEYS.END_AT);
+  }, [endAt]);
+
+  // ----- Tick loop based on absolute endAt -----
+  useEffect(() => {
+    if (tickRef.current) {
+      clearInterval(tickRef.current);
+      tickRef.current = null;
+    }
+    if (isRunning && endAt) {
+      // tick every second; compute from absolute time
+      tickRef.current = setInterval(() => {
+        const left = computeTimeLeft(endAt);
+        setTimeLeft(left);
+        if (left <= 0) {
+          clearInterval(tickRef.current);
+          tickRef.current = null;
+          handleTimerComplete();
+        }
+      }, 1000);
+    } else {
+      // stopped -> just display full duration for current mode
+      setTimeLeft(getDurationForMode(mode));
+    }
+    return () => {
+      if (tickRef.current) clearInterval(tickRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning, endAt, mode, settings.workDuration, settings.shortBreakDuration, settings.longBreakDuration]);
+
+  // ----- Track total work time only when running + work mode -----
+  useEffect(() => {
+    let workInterval;
+    if (isRunning && mode === 'work') {
+      workInterval = setInterval(() => {
+        setTotalWorkTime((prev) => {
+          const next = prev + 1;
+          localStorage.setItem(STORAGE_KEYS.TOTAL_WORK, String(next));
+          return next;
         });
       }, 1000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
     }
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isRunning, timeLeft]);
-
-  useEffect(() => {
-    if (isRunning && mode === 'work') {
-      const workInterval = setInterval(() => setTotalWorkTime(prev => prev + 1), 1000);
-      return () => clearInterval(workInterval);
-    }
+    return () => workInterval && clearInterval(workInterval);
   }, [isRunning, mode]);
 
-  const getDurationForMode = (currentMode) => {
-    switch (currentMode) {
-      case 'work': return settings.workDuration;
-      case 'shortBreak': return settings.shortBreakDuration;
-      case 'longBreak': return settings.longBreakDuration;
-      default: return settings.workDuration;
+  // ----- Actions -----
+  const startTimer = () => {
+    const durationSec = getDurationForMode(mode);
+    const deadline = Date.now() + durationSec * 1000;
+    setEndAt(deadline);
+    setIsRunning(true);
+  };
+
+  const handlePlayPause = () => {
+    if (isRunning) {
+      // pause -> freeze timeLeft and clear endAt
+      const left = computeTimeLeft(endAt);
+      setTimeLeft(left);
+      setIsRunning(false);
+      setEndAt(null);
+    } else {
+      // resume -> set new endAt based on current timeLeft
+      const deadline = Date.now() + timeLeft * 1000;
+      setEndAt(deadline);
+      setIsRunning(true);
+    }
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setEndAt(null);
+    setTimeLeft(getDurationForMode(mode));
+  };
+
+  const handleModeSwitch = (newMode) => {
+    setIsRunning(false);
+    setEndAt(null);
+    setMode(newMode);
+    setTimeLeft(getDurationForMode(newMode));
+  };
+
+  const notifyAndSound = (title, body) => {
+    if (settings.soundEnabled && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification(title, { body, icon: '/favicon.ico' });
+      } catch {}
     }
   };
 
   const handleTimerComplete = () => {
     setIsRunning(false);
-    if (settings.soundEnabled && audioRef.current) audioRef.current.play().catch(console.error);
+    setEndAt(null);
+    setTimeLeft(0);
 
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const message = mode === 'work'
-        ? 'Work session completed! Time for a break.'
-        : 'Break time is over! Ready to get back to work?';
-      new Notification('VidyaSathi Pomodoro', { body: message, icon: '/favicon.ico' });
-    }
-
-    if (mode === 'work') {
-      const newCompletedSessions = completedSessions + 1;
-      setCompletedSessions(newCompletedSessions);
-      const isLongBreak = newCompletedSessions % settings.longBreakInterval === 0;
-      setMode(isLongBreak ? 'longBreak' : 'shortBreak');
-      if (settings.autoStartBreaks) setTimeout(() => setIsRunning(true), 1000);
+    const isWork = mode === 'work';
+    if (isWork) {
+      const nextCompleted = completedSessions + 1;
+      setCompletedSessions(nextCompleted);
+      localStorage.setItem(STORAGE_KEYS.COMPLETED, String(nextCompleted));
+      notifyAndSound('⏰ Concentration Time Ended!', 'Great job! You can take a break now.');
+      // decide next mode
+      const isLong = nextCompleted % settings.longBreakInterval === 0;
+      const nextMode = isLong ? 'longBreak' : 'shortBreak';
+      setMode(nextMode);
+      setTimeLeft(getDurationForMode(nextMode));
+      if (settings.autoStartBreaks) {
+        const deadline = Date.now() + getDurationForMode(nextMode) * 1000;
+        setEndAt(deadline);
+        setIsRunning(true);
+      }
     } else {
+      // break finished
+      notifyAndSound('🔔 Break Over', 'Time to get back to focus!');
       setMode('work');
-      if (settings.autoStartWork) setTimeout(() => setIsRunning(true), 1000);
+      setTimeLeft(getDurationForMode('work'));
+      if (settings.autoStartWork) {
+        const deadline = Date.now() + getDurationForMode('work') * 1000;
+        setEndAt(deadline);
+        setIsRunning(true);
+      }
     }
   };
 
-  const handlePlayPause = () => setIsRunning(!isRunning);
-  const handleReset = () => {
-    setIsRunning(false);
-    setTimeLeft(getDurationForMode(mode) * 60);
-  };
-  const handleModeSwitch = (newMode) => {
-    setIsRunning(false);
-    setMode(newMode);
-  };
-
+  // ----- UI helpers -----
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -124,15 +260,9 @@ const Pomodoro = () => {
   };
 
   const getProgress = () => {
-    const totalDuration = getDurationForMode(mode) * 60;
-    return ((totalDuration - timeLeft) / totalDuration) * 100;
+    const total = getDurationForMode(mode);
+    return ((total - timeLeft) / total) * 100;
   };
-
-  const requestNotificationPermission = () => {
-    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
-  };
-
-  useEffect(() => requestNotificationPermission(), []);
 
   const getModeInfo = () => {
     switch (mode) {
@@ -185,8 +315,14 @@ const Pomodoro = () => {
 
         {/* Controls */}
         <div className="flex items-center justify-center space-x-4 mb-6">
-          <button onClick={handlePlayPause} className={`flex items-center justify-center w-16 h-16 rounded-full ${modeInfo.color} bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105`}>
+          <button
+            onClick={() => (isRunning ? handlePlayPause() : startTimer())}
+            className={`flex items-center justify-center w-16 h-16 rounded-full ${modeInfo.color} bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105`}
+          >
             {isRunning ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
+          </button>
+          <button onClick={handlePlayPause} className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            {isRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
           </button>
           <button onClick={handleReset} className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
             <RotateCcw className="w-5 h-5" />
@@ -234,29 +370,34 @@ const Pomodoro = () => {
                 {/* Work Duration */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Work Duration (minutes)</label>
-                  <input type="number" min="1" max="60" value={settings.workDuration} onChange={(e) => setSettings(prev => ({ ...prev, workDuration: parseInt(e.target.value) || 25 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <input type="number" min="1" max="90" value={settings.workDuration} onChange={(e) => setSettings(prev => ({ ...prev, workDuration: parseInt(e.target.value) || 25 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
                 </div>
                 {/* Short Break Duration */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Short Break Duration (minutes)</label>
-                  <input type="number" min="1" max="30" value={settings.shortBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, shortBreakDuration: parseInt(e.target.value) || 5 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <input type="number" min="1" max="60" value={settings.shortBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, shortBreakDuration: parseInt(e.target.value) || 5 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
                 </div>
                 {/* Long Break Duration */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Long Break Duration (minutes)</label>
-                  <input type="number" min="1" max="60" value={settings.longBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, longBreakDuration: parseInt(e.target.value) || 15 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <input type="number" min="1" max="120" value={settings.longBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, longBreakDuration: parseInt(e.target.value) || 15 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
                 </div>
                 {/* Long Break Interval */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Long Break Interval (sessions)</label>
-                  <input type="number" min="2" max="10" value={settings.longBreakInterval} onChange={(e) => setSettings(prev => ({ ...prev, longBreakInterval: parseInt(e.target.value) || 4 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <input type="number" min="2" max="12" value={settings.longBreakInterval} onChange={(e) => setSettings(prev => ({ ...prev, longBreakInterval: parseInt(e.target.value) || 4 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
                 </div>
 
                 {/* Auto-start & Sound */}
                 <div className="space-y-3">
                   <label className="flex items-center"><input type="checkbox" checked={settings.autoStartBreaks} onChange={(e)=>setSettings(prev=>({...prev,autoStartBreaks:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Auto-start breaks</span></label>
                   <label className="flex items-center"><input type="checkbox" checked={settings.autoStartWork} onChange={(e)=>setSettings(prev=>({...prev,autoStartWork:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Auto-start work sessions</span></label>
-                  <label className="flex items-center"><input type="checkbox" checked={settings.soundEnabled} onChange={(e)=>setSettings(prev=>({...prev,soundEnabled:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">Sound notifications {settings.soundEnabled ? <Volume2 className="w-4 h-4 ml-1"/> : <VolumeX className="w-4 h-4 ml-1"/>}</span></label>
+                  <label className="flex items-center">
+                    <input type="checkbox" checked={settings.soundEnabled} onChange={(e)=>setSettings(prev=>({...prev,soundEnabled:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                      Sound notifications {settings.soundEnabled ? <Volume2 className="w-4 h-4 ml-1"/> : <VolumeX className="w-4 h-4 ml-1"/>}
+                    </span>
+                  </label>
                 </div>
 
                 <button onClick={()=>setShowSettings(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">Save Settings</button>
@@ -266,9 +407,10 @@ const Pomodoro = () => {
         </div>
       )}
 
-      <audio ref={audioRef} preload="auto">
-        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav"/>
-      </audio>
+     <audio ref={audioRef} preload="auto">
+    <source src="/notification.mp3" type="audio/mpeg" />
+    </audio>
+
     </div>
   );
 };

@@ -30,6 +30,7 @@ async function listModels() {
     models.forEach(m => console.log(m.name));
   } catch (err) {
     console.error("Error listing models:", err.message);
+    
   }
 }
 // Uncomment if you need to check available models
@@ -62,23 +63,48 @@ export const askTutor = async (req, res) => {
     // Get user's chat history for context
     const userHistory = chatHistory.get(userId) || [];
 
-    // System prompt
-    const systemPrompt = `You are VidyaSathi, an AI-powered study tutor and learning companion. 
-Your role is to:
-1. Provide clear, educational explanations
-2. Help students understand concepts rather than just giving answers
-3. Encourage critical thinking
-4. Break down complex topics into manageable parts
-5. Provide study tips and strategies
-6. Be encouraging and supportive
+   // System prompt (refined for structured academic responses)
+const systemPrompt = `
+You are an academic AI Tutor named "VidyaSaathi AI".  
+Your goal is to provide clear, structured, and concise explanations to help students in self-study.
 
-Student's academic level: ${req.user.profile?.academicLevel || 'undergraduate'}
-Student's subjects of interest: ${req.user.profile?.subjects?.join(', ') || 'General studies'}`;
+When answering:
+- Use a **professional and academic tone** (avoid casual phrases like "Ah" or "Let's break it down").
+- Avoid conversational fillers or greetings.
+- Provide the answer in **clear bullet points or short paragraphs**.
+- Focus only on **relevant educational content**.
+- If the topic involves programming or technical subjects, include short **code snippets or syntax examples** (if necessary).
+- Keep the explanation **under 250 words**, unless the topic requires more detail.
+
+Example format:
+**Definition:**  
+(short definition)
+
+**Key Points:**  
+• Point 1  
+• Point 2  
+
+**Example:**  
+(code or scenario if applicable)
+
+**Conclusion:**  
+(short summary or use case)
+
+Student Information:
+• Academic Level: ${req.user.profile?.academicLevel || 'Undergraduate'}  
+• Subjects of Interest: ${req.user.profile?.subjects?.join(', ') || 'General Studies'}
+
+Now, answer the following question in that exact structured format.
+Please format your answer using valid Markdown syntax (for bold, lists, and code blocks).`;
+
 
     // Build user message
-    let userMessage = `Subject: ${subject || 'General'}\n`;
-    if (context) userMessage += `Context: ${context}\n`;
-    userMessage += `Question: ${question}`;
+    let userMessage = `
+      Subject: ${subject || 'General'}
+      ${context ? `Context: ${context}` : ''}
+      Question: ${question}
+      `;
+
 
     // Prepare conversation
     const messages = [
@@ -124,6 +150,13 @@ Student's subjects of interest: ${req.user.profile?.subjects?.join(', ') || 'Gen
 
   } catch (error) {
     console.error('AI Tutor error:', error);
+    if (error.status === 429 || error.message?.includes('429')) {
+    return res.status(429).json({
+      success: false,
+      message:
+        '⚠️ AI Tutor temporarily reached its usage limit. Please try again shortly.',
+    });
+  }
     res.status(500).json({
       success: false,
       message: 'Failed to get AI tutoring response'
@@ -210,6 +243,13 @@ Student Profile:
 
   } catch (error) {
     console.error('AI Career Advisor error:', error);
+    if (error.status === 429 || error.message?.includes('429')) {
+    return res.status(429).json({
+      success: false,
+      message:
+        '⚠️ Our AI service has reached its current usage limit. Please try again in a few minutes.',
+    });
+  }
     res.status(500).json({
       success: false,
       message: 'Failed to get career advice'

@@ -1,1 +1,16 @@
 @import "tailwindcss";
+.prose pre {
+  background-color: #1f2937; /* dark gray */
+  color: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.prose {
+  max-width: none !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+
+

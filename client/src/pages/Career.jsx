@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+
 import {
   Briefcase,
   GraduationCap,
@@ -14,6 +15,11 @@ import {
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
+
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeSanitize from 'rehype-sanitize';
+import "highlight.js/styles/github-dark.css";
 
 const Career = () => {
   const [profile, setProfile] = useState({
@@ -261,6 +267,19 @@ const Career = () => {
       </div>
     );
   }
+
+  const formatTime = (timestamp) => {
+  if (!(timestamp instanceof Date)) {
+    timestamp = new Date(timestamp);
+  }
+
+  return timestamp.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
 
   return (
     <div className="space-y-6">
@@ -512,36 +531,90 @@ const Career = () => {
             ) : (
               chatMessages.map((message) => (
                 <div
-                  key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg px-4 py-3 ${
+            key={message.id}
+            className={`flex w-full px-2 sm:px-4 ${
+              message.type === 'user' ? 'justify-end' : 'justify-start'
+            }`}
+          >
+            <div
+              className={`rounded-2xl px-4 py-3 break-words shadow-sm transition-all duration-200
+                ${
+                  message.type === 'user'
+                    ? 'bg-blue-600 text-white self-end max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%]'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white self-start max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%]'
+                }`}
+            >
+              <div className="flex items-start space-x-2">
+                {message.type === 'assistant' && (
+                  <Bot className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0 hidden sm:block" />
+                )}
+                {message.type === 'user' && (
+                  <User className="w-5 h-5 text-white mt-1 flex-shrink-0 hidden sm:block" />
+                )}
+               <div
+                className={`max-w-full overflow-x-auto prose prose-sm sm:prose-base dark:prose-invert leading-relaxed ${
+                  message.type === "assistant"
+                    ? "text-gray-900 dark:text-gray-100" // ✅ removed background color
+                    : "text-white"
+                }`}
+              >
+                <ReactMarkdown
+  rehypePlugins={[rehypeSanitize, rehypeHighlight]}
+  components={{
+    p: ({ node, ...props }) => (
+      <p className="mb-2 leading-relaxed" {...props} />
+    ),
+    strong: ({ node, ...props }) => (
+      <strong className="font-semibold text-gray-900 dark:text-white" {...props} />
+    ),
+    em: ({ node, ...props }) => (
+      <em className="italic text-gray-800 dark:text-gray-200" {...props} />
+    ),
+    ul: ({ node, ...props }) => (
+      <ul className="list-disc list-inside mb-2 space-y-1" {...props} />
+    ),
+    ol: ({ node, ...props }) => (
+      <ol className="list-decimal list-inside mb-2 space-y-1" {...props} />
+    ),
+    li: ({ node, ...props }) => (
+      <li className="ml-4" {...props} />
+    ),
+    code: ({ inline, className, children, ...props }) =>
+      inline ? (
+        <code
+          className="bg-gray-200 dark:bg-gray-800 text-sm px-1 py-0.5 rounded font-mono"
+          {...props}
+        >
+          {children}
+        </code>
+      ) : (
+        <pre className="bg-gray-900 text-gray-100 text-sm p-3 rounded-lg overflow-x-auto mb-3">
+          <code {...props}>{children}</code>
+        </pre>
+      ),
+  }}
+>
+  {message.content}
+</ReactMarkdown>
+
+              </div>
+
+
+                  <p
+                    className={`text-[10px] sm:text-xs mt-2 ${
                       message.type === 'user'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
                     }`}
                   >
-                    <div className="flex items-start space-x-2">
-                      {message.type === 'assistant' && (
-                        <Briefcase className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
-                      )}
-                      {message.type === 'user' && (
-                        <User className="w-5 h-5 text-white mt-1 flex-shrink-0" />
-                      )}
-                      <div className="flex-1">
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                        <p className={`text-xs mt-2 ${
-                          message.type === 'user' ? 'text-green-100' : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                    {formatTime(message.timestamp)}
+                  </p>
                 </div>
-              ))
-            )}
+              </div>
+            </div>
+          
+        ))
+      )}
             
             {/* Loading indicator */}
             {isLoading && (
