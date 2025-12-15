@@ -75,10 +75,9 @@ const connectDB = async () => {
 // Connect to database
 connectDB();
 
-/**
- * API Routes Setup
- * All routes are prefixed with /api for clear API structure
- */
+// API Routes Setup
+// All routes are prefixed with /api for clear API structure
+ 
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/notes', noteRoutes);
@@ -96,10 +95,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-/**
- * Global Error Handler
- * Catches all unhandled errors and returns appropriate responses
- */
+// Global Error Handler
+// Catches all unhandled errors and returns appropriate responses
+ 
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err.stack);
   
@@ -122,17 +120,15 @@ app.use((req, res) => {
 });
 
 
-/**
- * Start Server
- * Initialize the server and listen on specified port
- */
+// Start Server
+ //Initialize the server and listen on specified port
 app.listen(PORT, () => {
-  console.log(`🚀 VidyaSathi Server is running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+  console.log(` VidyaSathi Server is running on port ${PORT}`);
+  console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(` Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
 });
 
-// Graceful shutdown handling
+//shutdown handling
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
   process.exit(0);

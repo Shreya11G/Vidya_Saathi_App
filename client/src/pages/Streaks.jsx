@@ -13,11 +13,11 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-/**
- * Streaks Component
- * Displays user progress, streaks, and achievements
- * Features: Streak tracking, progress visualization, achievement badges
- */
+
+  // Streaks Component
+  // Displays user progress, streaks, and achievements
+  // Features: Streak tracking, progress visualization, achievement badges
+ 
 
 const Streaks = () => {
   // State for streak data from backend
@@ -29,16 +29,14 @@ const Streaks = () => {
   // State for selected time period for charts
   const [selectedPeriod, setSelectedPeriod] = useState('7days');
 
-  /**
-   * Fetch streak data from backend on component mount
-   */
+  // Fetch streak data from backend on component mount
+   
   useEffect(() => {
     fetchStreakData();
   }, []);
 
-  /**
-   * Fetch streak data from API
-   */
+  // Fetch streak data from API
+   
   const fetchStreakData = async () => {
     try {
       setLoading(true);
@@ -52,9 +50,8 @@ const Streaks = () => {
     }
   };
 
-  /**
-   * Get streak status color and message
-   */
+  // Get streak status color and message
+   
   const getStreakStatus = (streak) => {
     if (streak === 0) {
       return {
@@ -83,9 +80,8 @@ const Streaks = () => {
     }
   };
 
-  /**
-   * Get achievement category color
-   */
+  // Get achievement category color
+   
   const getAchievementColor = (category) => {
     switch (category) {
       case 'streak':
@@ -99,9 +95,8 @@ const Streaks = () => {
     }
   };
 
-  /**
-   * Format date for display
-   */
+  // Format date for display
+   
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -110,17 +105,15 @@ const Streaks = () => {
     });
   };
 
-  /**
-   * Get chart data based on selected period
-   */
+  // Get chart data based on selected period
+   
   const getChartData = () => {
     if (!streakData) return [];
     return selectedPeriod === '7days' ? streakData.chartData.last7Days : streakData.chartData.last30Days;
   };
 
-  /**
-   * Get maximum tasks for chart scaling
-   */
+  // Get maximum tasks for chart scaling
+   
   const getMaxTasks = () => {
     const data = getChartData();
     return Math.max(...data.map(d => d.tasks), 1);

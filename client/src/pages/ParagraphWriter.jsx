@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { FileText, Copy, RotateCcw } from 'lucide-react';
 
-/**
- * Paragraph Writer Component
- * Independent component that analyzes text input and provides statistics
- * Features: Line count, word count, character count with real-time updates
- */
+// Paragraph Writer Component
+//Independent component that analyzes text input and provides statistics
+//Features: Line count, word count, character count with real-time updates
+ 
 
 const ParagraphWriter = () => {
   // State to store the user's input text
@@ -19,12 +18,12 @@ const ParagraphWriter = () => {
     charactersWithSpaces: 0
   });
 
-  /**
-   * Calculate text statistics from input
-   * Counts lines, words, characters (with and without spaces)
-   * @param inputText - The text to analyze
-   * @returns Object with all counts
-   */
+  
+    // Calculate text statistics from input
+    // Counts lines, words, characters (with and without spaces)
+    // @param inputText - The text to analyze
+    // @returns Object with all counts
+   
   const calculateStats = (inputText) => {
     // Count lines by splitting on line breaks and filtering empty lines
     const lines = inputText.split('\n').filter(line => line.trim() !== '').length;

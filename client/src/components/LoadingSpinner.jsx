@@ -25,6 +25,31 @@ const LoadingSpinner = ({
     white: 'text-white'
   };
 
+  const loadChatFromHistory = (session) => {
+  setActiveSessionId(session.id);
+
+  // Build a message pair: user question + AI response
+  const loadedMessages = [
+    {
+      id: `user-${Date.now()}-history`,
+      type: 'user',
+      content: session.question || session.title || 'Previous question',
+      timestamp: new Date(session.timestamp),
+    },
+    {
+      id: `ai-${Date.now()}-history`,
+      type: 'assistant',
+      content: session.response || session.lastMessage || 'No previous answer available.',
+      timestamp: new Date(session.timestamp),
+    },
+  ];
+
+  setMessages(loadedMessages);
+  scrollToBottom();
+
+};
+
+
   return (
     <div className={`inline-block ${className}`}>
       <svg

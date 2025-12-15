@@ -7,10 +7,10 @@ const router = express.Router();
 // Apply authentication middleware to all streak routes
 router.use(authenticate);
 
-/**
- * Streak Routes
- * Handles user streak tracking and statistics
- */
+
+//   Streak Routes
+//   Handles user streak tracking and statistics
+
 
 // GET /api/streaks - Get user streak information
 router.get('/', getUserStreaks);

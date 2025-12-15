@@ -282,387 +282,221 @@ const Career = () => {
 
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Career Counselor</h1>
-          <p className="text-gray-600 dark:text-gray-400">Get personalized AI-powered career guidance</p>
+  <div className="space-y-6">
+
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          Career Counselor
+        </h1>
+        <p className="text-[var(--text-secondary)]">
+          Get personalized AI-powered career guidance
+        </p>
+      </div>
+
+      <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
+        <button
+          onClick={() => setActiveView('profile')}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeView === 'profile'
+              ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm'
+              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+          }`}
+        >
+          <User className="w-4 h-4 inline mr-2" /> Profile
+        </button>
+
+        <button
+          onClick={() => setActiveView('chat')}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeView === 'chat'
+              ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm'
+              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+          }`}
+        >
+          <Bot className="w-4 h-4 inline mr-2" /> Consultation
+        </button>
+      </div>
+    </div>
+
+    {/* Profile View */}
+    {activeView === 'profile' && (
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          {/* Left Column */}
+          <div className="space-y-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <GraduationCap className="w-5 h-5 text-blue-500" />
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                Academic Background
+              </h2>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Highest Qualification *
+              </label>
+              <select
+                name="qualification"
+                value={profile.qualification}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+              >
+                <option value="">Select qualification</option>
+                {qualificationOptions.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Academic Results/Grades
+              </label>
+              <input
+                type="text"
+                name="results"
+                value={profile.results}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Work Experience
+              </label>
+              <textarea
+                name="experience"
+                value={profile.experience}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Career Goals
+              </label>
+              <textarea
+                name="careerGoals"
+                value={profile.careerGoals}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+              />
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <Target className="w-5 h-5 text-green-500" />
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                Interests & Skills
+              </h2>
+            </div>
+
+            {[interestOptions, skillOptions, industryOptions].map((list, idx) => (
+              <div key={idx} className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-[var(--border-color)] rounded-lg p-3">
+                {list.map(item => (
+                  <label key={item} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      className="rounded text-blue-600"
+                    />
+                    <span className="text-sm text-[var(--text-secondary)]">
+                      {item}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-[var(--border-color)]">
           <button
-            onClick={() => setActiveView('profile')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeView === 'profile'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            onClick={saveProfile}
+            disabled={isSaving}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
           >
-            <User className="w-4 h-4 inline mr-2" /> Profile
+            {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+            <span>{isSaving ? 'Saving...' : 'Save Profile'}</span>
           </button>
+
           <button
-            onClick={() => setActiveView('chat')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeView === 'chat'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            onClick={generateCareerAnalysis}
+            disabled={isLoading}
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2"
           >
-            <Bot className="w-4 h-4 inline mr-2" /> Consultation
+            {isLoading ? <Loader2 className="animate-spin" /> : <TrendingUp />}
+            <span>{isLoading ? 'Analyzing...' : 'Get Career Analysis'}</span>
           </button>
         </div>
       </div>
+    )}
 
-      {/* Profile View */}
-      {activeView === 'profile' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Basic Information */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <GraduationCap className="w-5 h-5 text-blue-500" />
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Academic Background
-                </h2>
-              </div>
-
-              {/* Qualification */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Highest Qualification *
-                </label>
-                <select
-                  name="qualification"
-                  value={profile.qualification}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                >
-                  <option value="">Select qualification</option>
-                  {qualificationOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Academic Results */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Academic Results/Grades
-                </label>
-                <input
-                  type="text"
-                  name="results"
-                  value={profile.results}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 85%, 3.8 GPA, First Class"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-
-              {/* Experience */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Work Experience
-                </label>
-                <textarea
-                  name="experience"
-                  value={profile.experience}
-                  onChange={handleInputChange}
-                  rows={3}
-                  placeholder="Describe your work experience, internships, projects..."
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-
-              {/* Career Goals */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Career Goals
-                </label>
-                <textarea
-                  name="careerGoals"
-                  value={profile.careerGoals}
-                  onChange={handleInputChange}
-                  rows={3}
-                  placeholder="What are your long-term career aspirations?"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-            </div>
-
-            {/* Right Column - Interests and Skills */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <Target className="w-5 h-5 text-green-500" />
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Interests & Skills
-                </h2>
-              </div>
-
-              {/* Interests */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Areas of Interest *
-                </label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                  {interestOptions.map(interest => (
-                    <label key={interest} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={profile.interests.includes(interest)}
-                        onChange={() => handleMultiSelectChange('interests', interest)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {interest}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Skills */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Skills & Competencies
-                </label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                  {skillOptions.map(skill => (
-                    <label key={skill} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={profile.skills.includes(skill)}
-                        onChange={() => handleMultiSelectChange('skills', skill)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {skill}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Preferred Industries */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Preferred Industries
-                </label>
-                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                  {industryOptions.map(industry => (
-                    <label key={industry} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={profile.preferredIndustries.includes(industry)}
-                        onChange={() => handleMultiSelectChange('preferredIndustries', industry)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {industry}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={saveProfile}
-              disabled={isSaving}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            >
-              {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              <span>{isSaving ? 'Saving...' : 'Save Profile'}</span>
-            </button>
-
-            <button
-              onClick={generateCareerAnalysis}
-              disabled={isLoading || !profile.qualification || !profile.interests.length}
-              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            >
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <TrendingUp className="w-5 h-5" />}
-              <span>{isLoading ? 'Analyzing...' : 'Get Career Analysis'}</span>
-            </button>
-          </div>
+    {/* Chat View */}
+    {activeView === 'chat' && (
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+          <h3 className="font-semibold text-[var(--text-primary)]">
+            AI Career Counselor
+          </h3>
+          <p className="text-sm text-[var(--text-secondary)]">
+            Ask me about career paths, skills, and opportunities
+          </p>
         </div>
-      )}
 
-      {/* Chat View */}
-      {activeView === 'chat' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ height: '600px' }}>
-           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  AI Career Counselor
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Ask me about career paths, skills, and opportunities
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {chatMessages.map(message => (
+            <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`px-4 py-3 rounded-2xl max-w-[70%] ${
+                  message.type === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+                }`}
+              >
+                <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
+                  {message.content}
+                </ReactMarkdown>
+                <p className="text-xs mt-2 text-[var(--text-secondary)]">
+                  {formatTime(message.timestamp)}
                 </p>
               </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ height: '450px' }}>
-            {chatMessages.length === 0 ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <Briefcase className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    Welcome to Career Counseling!
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Ask me about career opportunities, skill development, or industry insights.
-                  </p>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                    <p>💼 Try: "What career options do I have with my profile?"</p>
-                    <p>📈 Or: "How can I improve my skills for tech industry?"</p>
-                    <p>🎯 Or: "What's the job market like for my field?"</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              chatMessages.map((message) => (
-                <div
-            key={message.id}
-            className={`flex w-full px-2 sm:px-4 ${
-              message.type === 'user' ? 'justify-end' : 'justify-start'
-            }`}
-          >
-            <div
-              className={`rounded-2xl px-4 py-3 break-words shadow-sm transition-all duration-200
-                ${
-                  message.type === 'user'
-                    ? 'bg-blue-600 text-white self-end max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%]'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white self-start max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%]'
-                }`}
+        {/* Input */}
+        <div className="p-4 border-t border-[var(--border-color)]">
+          <div className="flex gap-3">
+            <textarea
+              value={currentMessage}
+              onChange={(e) => setCurrentMessage(e.target.value)}
+              rows={2}
+              className="w-full px-4 py-3 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+            />
+            <button
+              onClick={getCareerAdvice}
+              className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg"
             >
-              <div className="flex items-start space-x-2">
-                {message.type === 'assistant' && (
-                  <Bot className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0 hidden sm:block" />
-                )}
-                {message.type === 'user' && (
-                  <User className="w-5 h-5 text-white mt-1 flex-shrink-0 hidden sm:block" />
-                )}
-               <div
-                className={`max-w-full overflow-x-auto prose prose-sm sm:prose-base dark:prose-invert leading-relaxed ${
-                  message.type === "assistant"
-                    ? "text-gray-900 dark:text-gray-100" // ✅ removed background color
-                    : "text-white"
-                }`}
-              >
-                <ReactMarkdown
-  rehypePlugins={[rehypeSanitize, rehypeHighlight]}
-  components={{
-    p: ({ node, ...props }) => (
-      <p className="mb-2 leading-relaxed" {...props} />
-    ),
-    strong: ({ node, ...props }) => (
-      <strong className="font-semibold text-gray-900 dark:text-white" {...props} />
-    ),
-    em: ({ node, ...props }) => (
-      <em className="italic text-gray-800 dark:text-gray-200" {...props} />
-    ),
-    ul: ({ node, ...props }) => (
-      <ul className="list-disc list-inside mb-2 space-y-1" {...props} />
-    ),
-    ol: ({ node, ...props }) => (
-      <ol className="list-decimal list-inside mb-2 space-y-1" {...props} />
-    ),
-    li: ({ node, ...props }) => (
-      <li className="ml-4" {...props} />
-    ),
-    code: ({ inline, className, children, ...props }) =>
-      inline ? (
-        <code
-          className="bg-gray-200 dark:bg-gray-800 text-sm px-1 py-0.5 rounded font-mono"
-          {...props}
-        >
-          {children}
-        </code>
-      ) : (
-        <pre className="bg-gray-900 text-gray-100 text-sm p-3 rounded-lg overflow-x-auto mb-3">
-          <code {...props}>{children}</code>
-        </pre>
-      ),
-  }}
->
-  {message.content}
-</ReactMarkdown>
-
-              </div>
-
-
-                  <p
-                    className={`text-[10px] sm:text-xs mt-2 ${
-                      message.type === 'user'
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    {formatTime(message.timestamp)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          
-        ))
-      )}
-            
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 max-w-[80%]">
-                  <div className="flex items-center space-x-2">
-                    <Briefcase className="w-5 h-5 text-green-500" />
-                    <div className="flex items-center space-x-1">
-                      <Loader2 className="w-4 h-4 animate-spin text-green-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Analyzing your career question...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Message Input */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-end space-x-3">
-              <div className="flex-1">
-                <textarea
-                  value={currentMessage}
-                  onChange={(e) => setCurrentMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask about career opportunities, skills, salary expectations..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
-                  rows={2}
-                  disabled={isLoading}
-                />
-              </div>
-              <button
-                onClick={getCareerAdvice}
-                disabled={isLoading || !currentMessage.trim()}
-                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white p-3 rounded-lg transition-colors flex items-center justify-center"
-              >
-                {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Send className="w-5 h-5" />
-                )}
-              </button>
-            </div>
+              <Send />
+            </button>
           </div>
         </div>
-      )}
-    </div>
-  );
-};
+      </div>
+    )}
 
-export default Career;
+  </div>
+);
+}; 
+export default Career; 

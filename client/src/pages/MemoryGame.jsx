@@ -10,12 +10,10 @@ Star,
 Zap
 } from 'lucide-react';
 
-/**
+// Memory Game Component
+//Flip-card memory game for stress relief and cognitive training
+//Features: Multiple difficulty levels, scoring system, timer, animations
 
-* Memory Game Component
-* Flip-card memory game for stress relief and cognitive training
-* Features: Multiple difficulty levels, scoring system, timer, animations
-  */
 
 const MemoryGame = () => {
 // Game state management

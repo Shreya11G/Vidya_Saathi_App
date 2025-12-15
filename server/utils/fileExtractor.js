@@ -21,9 +21,8 @@ const extractFromPDF = async (filePath) => {
   }
 };
 
-/**
- * Extract text from Word documents (.docx/.doc)
- */
+// Extract text from Word documents (.docx/.doc)
+ 
 const extractFromWord = async (filePath) => {
   try {
     const result = await mammoth.extractRawText({ path: filePath });
@@ -34,9 +33,8 @@ const extractFromWord = async (filePath) => {
   }
 };
 
-/**
- * Extract text from PowerPoint files (.pptx/.ppt)
- */
+// Extract text from PowerPoint files (.pptx/.ppt)
+ 
 const extractFromPowerPoint = async (filePath) => {
   try {
     const text = await officeParser.parseOfficeAsync(filePath);
@@ -47,9 +45,8 @@ const extractFromPowerPoint = async (filePath) => {
   }
 };
 
-/**
- * Main function to extract text from any supported file type
- */
+// Main function to extract text from any supported file type
+
 export const extractTextFromFile = async (file) => {
   if (!file || !file.path) throw new Error('Invalid file object');
 
@@ -57,7 +54,7 @@ export const extractTextFromFile = async (file) => {
   const fileName = file.originalname.toLowerCase();
 
   try {
-    // ✅ Ensure file exists before reading
+    // Ensure file exists before reading
     try {
       await fs.access(filePath);
     } catch {
@@ -76,7 +73,7 @@ export const extractTextFromFile = async (file) => {
       throw new Error('Unsupported file type. Please upload PDF, DOCX, or PPTX files.');
     }
 
-    // ✅ Clean text (remove extra whitespace/newlines)
+    // Clean text (remove extra whitespace/newlines)
     extractedText = extractedText.replace(/\s+/g, ' ').replace(/\n\s*\n/g, '\n').trim();
     console.log("Extracted text preview:", extractedText.slice(0, 300));
     console.log("Extracted text length:", extractedText.length);
@@ -87,7 +84,7 @@ export const extractTextFromFile = async (file) => {
 
     return extractedText;
   } finally {
-    // 🧹 Cleanup uploaded file safely
+    // Cleanup uploaded file safely
     try {
       await fs.unlink(filePath);
     } catch (err) {

@@ -191,216 +191,187 @@ const loadChatFromHistory = (session) => {
     scrollToBottom(); // Optional: scroll down after loading
   };
 
-return ( <div className="flex h-[calc(100vh-8rem)] bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-{/* Sidebar */} <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"> <div className="p-4 border-b border-gray-200 dark:border-gray-700"> <div className="flex items-center justify-between mb-4"> <h2 className="text-lg font-semibold text-gray-900 dark:text-white">AI Tutor</h2> <Bot className="w-6 h-6 text-blue-500" /> </div> <button
-         onClick={startNewChat}
-         className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
-       > <Plus className="w-4 h-4" /> <span>New Question</span> </button> </div>
+return (
+  <div className="flex h-[calc(100vh-8rem)] bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] overflow-hidden">
 
-```
-    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <input
-          type="text"
-          placeholder="Search history..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-        />
+    {/* Sidebar */}
+    <div className="w-80 bg-[var(--bg-secondary)] border-r border-[var(--border-color)] flex flex-col">
+
+      <div className="p-4 border-b border-[var(--border-color)]">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">AI Tutor</h2>
+          <Bot className="w-6 h-6 text-blue-500" />
+        </div>
+
+        <button
+          onClick={startNewChat}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
+        >
+          <Plus className="w-4 h-4" />
+          <span>New Question</span>
+        </button>
       </div>
-    </div>
 
-    <div className="flex-1 overflow-y-auto">
-      {historyLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <LoadingSpinner size="medium" />
+      <div className="p-4 border-b border-[var(--border-color)]">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search history..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] text-sm"
+          />
         </div>
-      ) : filteredHistory.length === 0 ? (
-        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-          {searchTerm ? 'No matching conversations' : 'No chat history yet'}
-        </div>
-      ) : (
-        <div className="p-2 space-y-2">
-          {filteredHistory.map((session) => (
-            <div
-              key={session.id}
-              className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                activeSessionId === session.id
-                  ? 'bg-blue-100 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-              onClick={() => loadChatFromHistory(session)}
+      </div>
 
-            >
-              <div className="flex items-start space-x-2">
-                <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {session.title}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
-                    {session.lastMessage}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                    {session.timestamp.toLocaleDateString()}
-                  </p>
+      <div className="flex-1 overflow-y-auto">
+        {historyLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <LoadingSpinner size="medium" />
+          </div>
+        ) : filteredHistory.length === 0 ? (
+          <div className="p-4 text-center text-[var(--text-secondary)]">
+            {searchTerm ? 'No matching conversations' : 'No chat history yet'}
+          </div>
+        ) : (
+          <div className="p-2 space-y-2">
+            {filteredHistory.map((session) => (
+              <div
+                key={session.id}
+                onClick={() => loadChatFromHistory(session)}
+                className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                  activeSessionId === session.id
+                    ? 'bg-blue-500/10 border border-blue-500/30'
+                    : 'hover:bg-[var(--bg-primary)]'
+                }`}
+              >
+                <div className="flex items-start space-x-2">
+                  <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                      {session.title}
+                    </p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate mt-1">
+                      {session.lastMessage}
+                    </p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">
+                      {session.timestamp.toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+      </div>
+
+      {chatHistory.length > 0 && (
+        <div className="p-4 border-t border-[var(--border-color)]">
+          <button
+            onClick={clearChatHistory}
+            className="w-full text-red-600 hover:text-red-700 px-4 py-2 rounded-lg hover:bg-red-500/10 transition-colors flex items-center justify-center space-x-2 text-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Clear History</span>
+          </button>
         </div>
       )}
     </div>
 
-    {chatHistory.length > 0 && (
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          onClick={clearChatHistory}
-          className="w-full text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-4 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center justify-center space-x-2 text-sm"
-        >
-          <Trash2 className="w-4 h-4" />
-          <span>Clear History</span>
-        </button>
-      </div>
-    )}
-  </div>
+    {/* Main Chat */}
+    <div className="flex-1 flex flex-col">
 
-  {/* Main Chat */}
-  <div className="flex-1 flex flex-col">
-    <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">AI Study Tutor</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Ask me anything about your studies</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <label className="text-sm text-gray-600 dark:text-gray-400">Subject:</label>
-          <input
-            type="text"
-            placeholder="e.g., Math, Physics"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm w-32"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      {messages.length === 0 ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <Bot className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Welcome to AI Tutor!</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Ask me any study-related question and I'll help you understand the concepts.
-            </p>
-            <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-              <p>💡 Try asking: "Explain photosynthesis"</p>
-              <p>📚 Or: "Help me solve this math problem"</p>
-              <p>🔬 Or: "What is quantum physics?"</p>
-            </div>
+      <div className="p-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">AI Study Tutor</h1>
+            <p className="text-sm text-[var(--text-secondary)]">Ask me anything about your studies</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-[var(--text-secondary)]">Subject:</label>
+            <input
+              type="text"
+              placeholder="e.g., Math, Physics"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="px-3 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] text-sm w-32"
+            />
           </div>
         </div>
-      ) : (
-        messages.map((message) => (
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex w-full px-2 sm:px-4 ${
-              message.type === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex w-full ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`rounded-2xl px-4 py-3 break-words shadow-sm transition-all duration-200
-                ${
-                  message.type === 'user'
-                    ? 'bg-blue-600 text-white self-end max-w-[85%] sm:max-w-[75%] md:max-w-[65%] lg:max-w-[55%]'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white self-start max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%]'
-                }`}
+              className={`rounded-2xl px-4 py-3 shadow-sm max-w-[70%] ${
+                message.type === 'user'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+              }`}
             >
               <div className="flex items-start space-x-2">
                 {message.type === 'assistant' && (
-                  <Bot className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0 hidden sm:block" />
+                  <Bot className="w-5 h-5 text-blue-500 mt-1 hidden sm:block" />
                 )}
                 {message.type === 'user' && (
-                  <User className="w-5 h-5 text-white mt-1 flex-shrink-0 hidden sm:block" />
+                  <User className="w-5 h-5 text-white mt-1 hidden sm:block" />
                 )}
-               <div
-                className={`max-w-full overflow-x-auto prose prose-sm sm:prose-base dark:prose-invert leading-relaxed ${
-                  message.type === "assistant"
-                    ? "text-gray-900 dark:text-gray-100" // ✅ removed background color
-                    : "text-white"
-                }`}
-              >
-                <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
-                  {message.content}
-                </ReactMarkdown>
-              </div>
 
-
-                  <p
-                    className={`text-[10px] sm:text-xs mt-2 ${
-                      message.type === 'user'
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
+                <div className="prose prose-sm dark:prose-invert max-w-full">
+                  <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
+                    {message.content}
+                  </ReactMarkdown>
+                  <p className="text-xs mt-2 text-[var(--text-secondary)]">
                     {formatTime(message.timestamp)}
                   </p>
                 </div>
               </div>
             </div>
-          
-        ))
-      )}
-
-      {isLoading && (
-        <div className="flex justify-start">
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 max-w-[80%]">
-            <div className="flex items-center space-x-2">
-              <Bot className="w-5 h-5 text-blue-500" />
-              <div className="flex items-center space-x-1">
-                <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                <span className="text-gray-600 dark:text-gray-400">AI is thinking...</span>
-              </div>
-            </div>
           </div>
-        </div>
-      )}
-      <div ref={messagesEndRef} />
-    </div>
+        ))}
 
-    <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      <div className="flex items-end space-x-3">
-        <div className="flex-1">
+        {isLoading && (
+          <div className="flex items-center space-x-2">
+            <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+            <span className="text-[var(--text-secondary)]">AI is thinking...</span>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      <div className="p-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
+        <div className="flex items-end space-x-3">
           <textarea
             ref={messageInputRef}
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask your study question here... (Press Enter to send, Shift+Enter for new line)"
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
             rows={3}
+            placeholder="Ask your study question here..."
+            className="w-full px-4 py-3 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] resize-none"
             disabled={isLoading}
           />
+          <button
+            onClick={handleSendMessage}
+            disabled={isLoading || !currentMessage.trim()}
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white p-3 rounded-lg"
+          >
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+          </button>
         </div>
-        <button
-          onClick={handleSendMessage}
-          disabled={isLoading || !currentMessage.trim()}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white p-3 rounded-lg transition-colors flex items-center justify-center"
-        >
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-        </button>
+        <p className="text-xs text-[var(--text-secondary)] mt-2">
+          💡 Tip: Be specific with your questions for better answers.
+        </p>
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-        💡 Tip: Be specific with your questions for better answers. Include context when needed.
-      </p>
+
     </div>
   </div>
-</div>
-
 );
-};
-
+}; 
 export default AITutor;
