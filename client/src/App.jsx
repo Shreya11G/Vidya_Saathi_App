@@ -33,7 +33,7 @@ function App() {
       <AuthProvider>
         <PomodoroProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+          <div className="min-h-screen bg-[var(--bg-primary)] transition-colors duration-200">
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />

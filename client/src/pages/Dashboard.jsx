@@ -90,7 +90,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
     {/* Welcome Section */}
-    <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+    <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
@@ -111,7 +111,7 @@ const Dashboard = () => {
       {/* Stats Overview */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Current Streak</p>
         <p className="text-3xl font-bold text-orange-500">{stats?.streaks.current}</p>
         <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -119,7 +119,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Tasks Today</p>
         <p className="text-3xl font-bold text-blue-500">{stats?.tasks.dueToday}</p>
         <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -127,7 +127,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Total Notes</p>
         <p className="text-3xl font-bold text-yellow-500">{stats?.notes.total}</p>
         <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -135,7 +135,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Study Links</p>
         <p className="text-3xl font-bold text-green-500">{stats?.links.total}</p>
         <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -170,13 +170,13 @@ const Dashboard = () => {
 
       {/* Today's Focus */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Today's Focus</h3>
             <Target className="w-5 h-5 text-blue-500" />
           </div>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-blue-900/20 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                 <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -185,7 +185,7 @@ const Dashboard = () => {
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400" />
             </div>
-            <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-purple-900/20 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                 <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -194,7 +194,7 @@ const Dashboard = () => {
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400" />
             </div>
-            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-green-900/20 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -207,7 +207,7 @@ const Dashboard = () => {
         </div>
 
         {/* Feature Highlights */}
-        <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-[var(--text-primary)]">Explore Features</h3>
             <BookOpen className="w-5 h-5 text-purple-500" />
@@ -215,7 +215,7 @@ const Dashboard = () => {
           <div className="space-y-4">
             <Link
               to="/ai-tutor"
-              className="block p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
+              className="block p-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
             >
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -234,7 +234,7 @@ const Dashboard = () => {
 
             <Link
               to="/memory-game"
-              className="block p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
+              className="block p-4 bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
             >
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -253,7 +253,7 @@ const Dashboard = () => {
 
             <Link
               to="/career"
-              className="block p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
+              className="block p-4 bg-gradient-to-r  from-orange-900/20 to-red-900/20 rounded-lg hover:shadow-md transition-all duration-200 group"
             >
               <div className="flex items-start space-x-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center flex-shrink-0">

@@ -191,68 +191,77 @@ if (newFlippedCards.length === 2) {
 
 // Score calculation
 const calculateMatchScore = () => {
-const baseScore = 100;
-const difficultyMultiplier = selectedDifficulty.gridSize / 4;
-const timeBonus = Math.max(0, selectedDifficulty.timeBonus - gameStats.timeElapsed);
-return Math.round(baseScore * difficultyMultiplier + timeBonus);
+  const baseScore = 100;
+  const difficultyMultiplier = selectedDifficulty.gridSize / 4;
+  const timeBonus = Math.max(0, selectedDifficulty.timeBonus - gameStats.timeElapsed);
+  return Math.round(baseScore * difficultyMultiplier + timeBonus);
 };
 
 // Complete game
 const completeGame = () => {
-if (timerInterval) clearInterval(timerInterval);
-const completionBonus = Math.max(0, 1000 - (gameStats.moves * 10) - gameStats.timeElapsed);
-setGameStats(prev => ({ ...prev, score: prev.score + completionBonus }));
-setGameStatus('completed');
+  if (timerInterval) clearInterval(timerInterval);
+  const completionBonus = Math.max(0, 1000 - (gameStats.moves * 10) - gameStats.timeElapsed);
+  setGameStats(prev => ({ ...prev, score: prev.score + completionBonus }));
+  setGameStatus('completed');
 };
 
 // Reset
 const resetToMenu = () => {
-if (timerInterval) clearInterval(timerInterval);
-setGameStatus('menu');
-setCards([]);
-setFlippedCards([]);
+  if (timerInterval) clearInterval(timerInterval);
+  setGameStatus('menu');
+  setCards([]);
+  setFlippedCards([]);
 };
 
 // Format time
 const formatTime = (seconds) => {
-const mins = Math.floor(seconds / 60);
-const secs = seconds % 60;
-return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
 // Performance rating
 const getPerformanceRating = () => {
-const totalCards = selectedDifficulty.gridSize * selectedDifficulty.gridSize;
-const optimalMoves = totalCards / 2;
-const moveEfficiency = optimalMoves / gameStats.moves;
-if (moveEfficiency > 0.8 && gameStats.timeElapsed < 120) return 3;
-if (moveEfficiency > 0.6 && gameStats.timeElapsed < 180) return 2;
-return 1;
+  const totalCards = selectedDifficulty.gridSize * selectedDifficulty.gridSize;
+  const optimalMoves = totalCards / 2;
+  const moveEfficiency = optimalMoves / gameStats.moves;
+  if (moveEfficiency > 0.8 && gameStats.timeElapsed < 120) return 3;
+  if (moveEfficiency > 0.6 && gameStats.timeElapsed < 180) return 2;
+  return 1;
 };
 
 // Cleanup timer
 useEffect(() => {
-return () => {
-if (timerInterval) clearInterval(timerInterval);
-};
+  return () => {
+  if (timerInterval) clearInterval(timerInterval);
+  };
 }, [timerInterval]);
 
-return ( <div className="space-y-6">
-{/* Header */} <div className="flex items-center justify-between"> <div> <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Memory Game</h1> <p className="text-gray-600 dark:text-gray-400">
-Flip cards to find matching pairs and train your memory </p> </div> <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center"> <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" /> </div> </div>
+return ( 
+<div className="space-y-6">
+{/* Header */} 
+<div className="flex items-center justify-between"> 
+  <div> 
+    <h1 className="text-2xl font-bold text-[var(--text-primary)]">Memory Game</h1> 
+    <p className="text-[var(--text-secondary)]">Flip cards to find matching pairs and train your memory </p> 
+    </div> 
+    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center"> 
+    <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+     </div> 
+    </div>
   {/* Menu */}
   {gameStatus === 'menu' && (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-8">
+    <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border p-8">
       <div className="text-center mb-8">
         <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
           <Target className="w-10 h-10 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Memory Challenge</h2>
-        <p className="text-gray-600 dark:text-gray-400">Test your memory and concentration skills</p>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Memory Challenge</h2>
+        <p className="text-[var(--text-secondary)]">Test your memory and concentration skills</p>
       </div>
 
       <div className="space-y-4 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center">Choose Difficulty</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)] text-center">Choose Difficulty</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {difficultyLevels.map((level) => (
             <button
@@ -260,16 +269,12 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
               onClick={() => setSelectedDifficulty(level)}
               className={`p-4 rounded-lg border-2 transition-all ${
                 selectedDifficulty.name === level.name
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-gray-200 dark:border-gray-600 hover:border-purple-300'
+                  ? 'border-purple-500  bg-purple-900/20'
+                  : 'border-gray-600 hover:border-purple-300'
               }`}
             >
-              <h4 className={`font-semibold mb-1 ${
-                selectedDifficulty.name === level.name
-                  ? 'text-purple-700 dark:text-purple-300'
-                  : 'text-gray-900 dark:text-white'
-              }`}>{level.name}</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{level.description}</p>
+              <h4 className={`font-semibold mb-1 text-[var(--text-primary)]`}>{level.name}</h4>
+              <p className="text-sm text-[var(--text-secondary)] mb-2">{level.description}</p>
               <div className="text-xs text-gray-500">
                 {level.gridSize}×{level.gridSize} = {level.gridSize * level.gridSize} cards
               </div>
@@ -294,7 +299,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
   {gameStatus === 'playing' && (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-4">
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="text-center">
@@ -316,7 +321,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
           </div>
           <button
             onClick={resetToMenu}
-            className="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            className="bg-[var(--bg-primary)] text-[var(--text-secondary)] px-4 py-2 rounded-lg flex items-center space-x-2 border border[var(--border-color)] hover:bg-[var(--bg-secondary)]"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset</span>
@@ -325,7 +330,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
       </div>
 
       {/* Board */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-6">
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border p-6">
         <div
           className="grid gap-3 mx-auto"
           style={{
@@ -340,7 +345,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
               className={`aspect-square rounded-lg border-2 transition transform hover:scale-105 ${
                 card.isFlipped || card.isMatched
                   ? `${card.color}`
-                  : 'bg-gray-200 dark:bg-gray-700'
+                  : 'bg-[var(--bg-secondary)]'
               } ${card.isMatched ? 'opacity-75 scale-95' : ''}`}
               disabled={card.isFlipped || card.isMatched}
             >
@@ -348,7 +353,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
                 {card.isFlipped || card.isMatched ? (
                   <span className="text-2xl">{card.symbol}</span>
                 ) : (
-                  <div className="w-6 h-6 bg-gray-400 rounded opacity-50" />
+                  <div className="w-6 h-6 bg-[var(--bg-primary)] rounded opacity-50" />
                 )}
               </div>
             </button>
@@ -360,7 +365,7 @@ Flip cards to find matching pairs and train your memory </p> </div> <div classNa
 
   {/* Completed */}
   {gameStatus === 'completed' && (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-8 text-center">
+    <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border p-8 text-center">
       <div className="mb-6">
         <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations! 🎉</h2>

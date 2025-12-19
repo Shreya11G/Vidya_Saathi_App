@@ -44,14 +44,14 @@ const Header = ({ title, onMenuClick }) => {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 lg:px-6 py-4">
+    <header className="bg-[var(--bg-secondary)] border border-[var(--border-color)] px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Left Section */}
         <div className="flex items-center space-x-4">
           {/* Mobile Menu Button */}
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="lg:hidden p-2 rounded-md hover:bg-[var(--bg-primary)] transition-colors"
             aria-label="Open navigation menu"
           >
             <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -59,10 +59,10 @@ const Header = ({ title, onMenuClick }) => {
 
           {/* Page Title */}
           <div>
-            <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-xl lg:text-2xl font-bold text-[var(--text-primary)]">
               {title}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -78,16 +78,16 @@ const Header = ({ title, onMenuClick }) => {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 relative group"
+            className="p-2 rounded-lg hover:bg-[var(--bg-primary)] transition-colors duration-200 relative group"
             aria-label={getThemeLabel()}
             title={getThemeLabel()}
           >
-            <div className="text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors">
+            <div className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
               {getThemeIcon()}
             </div>
 
             {/* Theme Indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800">
+            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border border-[var(--border-color)]">
               {theme === 'light' && (
                 <div className="w-full h-full bg-yellow-400 rounded-full"></div>
               )}
@@ -101,7 +101,7 @@ const Header = ({ title, onMenuClick }) => {
           </button>
 
           {/* Current Time Display */}
-          <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">
+          <div className="hidden sm:block text-sm text-[var(--text-primary)]">
             <CurrentTime />
           </div>
         </div>
@@ -127,14 +127,14 @@ const CurrentTime = () => {
 
   return (
     <div className="text-right">
-      <div className="font-mono text-lg text-gray-900 dark:text-white">
+      <div className="font-mono text-lg text-[var(--text-primary)]">
         {time.toLocaleTimeString('en-US', {
           hour12: true,
           hour: 'numeric',
           minute: '2-digit'
         })}
       </div>
-      <div className="text-xs text-gray-500 dark:text-gray-400">
+      <div className="text-xs text-[var(--text-secondary)]">
         {time.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric'

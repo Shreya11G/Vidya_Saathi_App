@@ -169,8 +169,8 @@ const Notes = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notes</h1>
-          <p className="text-gray-600 dark:text-gray-400">Create and organize your sticky notes</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Notes</h1>
+          <p className="text-[var(--text-secondary)]">Create and organize your sticky notes</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
@@ -181,7 +181,7 @@ const Notes = () => {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -190,14 +190,14 @@ const Notes = () => {
               placeholder="Search notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
             />
           </div>
           <div>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
             >
               <option value="all">All Categories</option>
               <option value="study">Study</option>
@@ -214,12 +214,12 @@ const Notes = () => {
       {/* Notes Grid */}
       <div className="space-y-4">
         {sortedNotes.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border[var(--border-color)] p-12 text-center">
+            <div className="w-16 h-16  bg-yellow-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Plus className="w-8 h-8 text-yellow-500" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No notes found</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">No notes found</h3>
+            <p className="text-[var(--text-secondary)] mb-4">
               {searchTerm || filterCategory !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Create your first note to get started'}
@@ -299,10 +299,10 @@ const Notes = () => {
       {/* Add/Edit Note Modal */}
       {(showAddModal || editingNote) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   {editingNote ? 'Edit Note' : 'Add New Note'}
                 </h2>
                 <button
@@ -310,7 +310,7 @@ const Notes = () => {
                     setShowAddModal(false);
                     handleCancelEdit();
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-gray-400 hover:text-[var(--text-secondary)] "
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -319,13 +319,13 @@ const Notes = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Note Title *</label>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Note Title *</label>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)] "
                     placeholder="Enter note title"
                     required
                   />
@@ -333,13 +333,13 @@ const Notes = () => {
 
                 {/* Content */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content *</label>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Content *</label>
                   <textarea
                     name="content"
                     value={formData.content}
                     onChange={handleInputChange}
                     rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)]"
                     placeholder="Enter note content"
                     required
                   />
@@ -348,12 +348,12 @@ const Notes = () => {
                 {/* Category and Color */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Category</label>
                     <select
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)]"
                     >
                       <option value="study">Study</option>
                       <option value="personal">Personal</option>
@@ -365,7 +365,7 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Color</label>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Color</label>
                     <div className="flex space-x-2">
                       {noteColors.map((color) => (
                         <button
@@ -383,12 +383,12 @@ const Notes = () => {
 
                 {/* Tags */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags</label>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Tags</label>
                   <input
                     type="text"
                     placeholder="Type and press Enter to add tags"
                     onKeyDown={handleTagInput}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-[var(--bg-primary)]"
                   />
                   {formData.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
@@ -401,7 +401,7 @@ const Notes = () => {
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-1 text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200"
+                            className="ml-1 text-yellow-400 hover:text-yellow-200"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -425,7 +425,7 @@ const Notes = () => {
                       setShowAddModal(false);
                       handleCancelEdit();
                     }}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg transition-colors"
+                    className="flex-1  bg-gray-600 hover:bg-gray-700  text-gray-300 py-2 px-4 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>

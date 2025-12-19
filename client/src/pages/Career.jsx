@@ -322,7 +322,7 @@ const Career = () => {
 
     {/* Profile View */}
     {activeView === 'profile' && (
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           {/* Left Column */}
@@ -342,7 +342,7 @@ const Career = () => {
                 name="qualification"
                 value={profile.qualification}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)]"
               >
                 <option value="">Select qualification</option>
                 {qualificationOptions.map(option => (
@@ -360,7 +360,7 @@ const Career = () => {
                 name="results"
                 value={profile.results}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -373,7 +373,7 @@ const Career = () => {
                 value={profile.experience}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -386,7 +386,7 @@ const Career = () => {
                 value={profile.careerGoals}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)]"
+                className="w-full px-3 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)]"
               />
             </div>
           </div>
