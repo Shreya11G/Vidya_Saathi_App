@@ -89,17 +89,17 @@ const ParagraphWriter = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Paragraph Writer
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-[var(--text-secondary)]">
             Analyze your text with real-time statistics
           </p>
         </div>
         
         {/* Header Icon */}
-        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-          <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <div className="w-12 h-12 bg-[var(--bg-secondary)] rounded-lg flex items-center justify-center">
+          <FileText className="w-6 h-6 text-blue-600" />
         </div>
       </div>
 
@@ -107,9 +107,9 @@ const ParagraphWriter = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Text Input Section */}
         <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Text Input
               </h2>
               
@@ -118,7 +118,7 @@ const ParagraphWriter = () => {
                 {text && (
                   <button
                     onClick={handleCopy}
-                    className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+                    className="p-2  text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                     title="Copy text"
                   >
                     <Copy className="w-4 h-4" />
@@ -128,7 +128,7 @@ const ParagraphWriter = () => {
                 {text && (
                   <button
                     onClick={handleClear}
-                    className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                    className="p-2 text-[var(--text-secondary)]  hover:text-red-400 transition-colors"
                     title="Clear text"
                   >
                     <RotateCcw className="w-4 h-4" />
@@ -142,12 +142,12 @@ const ParagraphWriter = () => {
               value={text}
               onChange={handleTextChange}
               placeholder="Paste or type your paragraph here..."
-              className="w-full h-96 p-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+              className="w-full h-96 p-4 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)] placeholder-gray-400 resize-none"
               style={{ fontFamily: 'monospace' }}
             />
             
             <div className="mt-2 text-right">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-[var(--text-secondary)]">
                 {stats.charactersWithSpaces} characters
               </span>
             </div>
@@ -156,75 +156,75 @@ const ParagraphWriter = () => {
 
         {/* Statistics Panel */}
         <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Text Statistics
             </h2>
 
             <div className="space-y-4">
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+              <div className="bg-blue-50  rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                  <span className="text-sm font-medium text-blue-700 ">
                     Lines
                   </span>
-                  <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  <span className="text-2xl font-bold text-blue-600 ">
                     {stats.lines}
                   </span>
                 </div>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                <p className="text-xs text-blue-600  mt-1">
                   Non-empty lines
                 </p>
               </div>
 
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+              <div className="bg-green-50 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                  <span className="text-sm font-medium text-green-700 ">
                     Words
                   </span>
-                  <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <span className="text-2xl font-bold text-green-600">
                     {stats.words}
                   </span>
                 </div>
-                <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                <p className="text-xs text-green-600  mt-1">
                   Space-separated words
                 </p>
               </div>
 
-              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+              <div className="bg-purple-50  rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                  <span className="text-sm font-medium text-purple-700 ">
                     Characters
                   </span>
-                  <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <span className="text-2xl font-bold text-purple-600 ">
                     {stats.characters}
                   </span>
                 </div>
-                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                <p className="text-xs text-purple-600 ">
                   Excluding spaces
                 </p>
               </div>
 
-              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+              <div className="bg-orange-50 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                  <span className="text-sm font-medium text-orange-700 ">
                     With Spaces
                   </span>
-                  <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                  <span className="text-2xl font-bold text-orange-600 ">
                     {stats.charactersWithSpaces}
                   </span>
                 </div>
-                <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                <p className="text-xs text-orange-600  mt-1">
                   Including spaces
                 </p>
               </div>
             </div>
 
             {text && (
-              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div className="mt-6 pt-4 border-t border-[var(--border-color)]">
+                <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">
                   Quick Analysis
                 </h3>
-                <div className="space-y-2 text-xs text-gray-600 dark:text-gray-400">
+                <div className="space-y-2 text-xs text-[var(--text-secondary)]">
                   <div className="flex justify-between">
                     <span>Avg words/line:</span>
                     <span>{stats.lines > 0 ? Math.round((stats.words / stats.lines) * 10) / 10 : 0}</span>
@@ -244,11 +244,11 @@ const ParagraphWriter = () => {
             )}
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="bg-[var(--bg-secondary)] rounded-xl p-4">
+            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">
               💡 Tips
             </h3>
-            <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+            <ul className="text-xs text-[var(--text-secondary)] space-y-1">
               <li>• Paste text from any source</li>
               <li>• Statistics update in real-time</li>
               <li>• Use copy button to save your work</li>

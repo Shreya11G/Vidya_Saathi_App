@@ -148,21 +148,21 @@ const Tasks = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'urgent': return 'text-red-600 bg-red-100 dark:bg-red-900/20';
-      case 'high': return 'text-orange-600 bg-orange-100 dark:bg-orange-900/20';
-      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
-      case 'low': return 'text-green-600 bg-green-100 dark:bg-green-900/20';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
+      case 'urgent': return 'text-red-600 bg-red-100 ';
+      case 'high': return 'text-orange-600 bg-orange-100 ';
+      case 'medium': return 'text-yellow-600 bg-yellow-100';
+      case 'low': return 'text-green-600 bg-green-100';
+      default: return 'text-gray-600 bg-gray-100';
     }
   };
 
   const getCategoryColor = (category) => {
     switch (category) {
-      case 'academic': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
-      case 'personal': return 'text-purple-600 bg-purple-100 dark:bg-purple-900/20';
-      case 'career': return 'text-green-600 bg-green-100 dark:bg-green-900/20';
-      case 'health': return 'text-pink-600 bg-pink-100 dark:bg-pink-900/20';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
+      case 'academic': return 'text-blue-600 bg-blue-100 ';
+      case 'personal': return 'text-purple-600 bg-purple-100 ';
+      case 'career': return 'text-green-600 bg-green-100 ';
+      case 'health': return 'text-pink-600 bg-pink-100 ';
+      default: return 'text-gray-600 bg-gray-100 ';
     }
   };
 
@@ -190,8 +190,8 @@ const Tasks = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your todos and stay organized</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] ">Tasks</h1>
+          <p className="text-[var(--text-secondary)] ">Manage your todos and stay organized</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
@@ -203,7 +203,7 @@ const Tasks = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="lg:col-span-2">
             <div className="relative">
@@ -213,7 +213,7 @@ const Tasks = () => {
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
               />
             </div>
           </div>
@@ -222,7 +222,7 @@ const Tasks = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -234,7 +234,7 @@ const Tasks = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
             >
               <option value="all">All Categories</option>
               <option value="academic">Academic</option>
@@ -249,7 +249,7 @@ const Tasks = () => {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -264,12 +264,12 @@ const Tasks = () => {
       {/* Tasks List */}
       <div className="space-y-4">
         {filteredTasks.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-gray-400" />
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-12 text-center">
+            <div className="w-16 h-16 bg-[var(--bg-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-[var(--text-secondary)]" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No tasks found</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">No tasks found</h3>
+            <p className="text-[var(--text-secondary)] mb-4">
               {searchTerm || filterStatus !== 'all' || filterCategory !== 'all' || filterPriority !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Create your first task to get started'}
@@ -288,7 +288,7 @@ const Tasks = () => {
           filteredTasks.map((task) => (
             <div
               key={task._id}
-              className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 ${task.completed ? 'opacity-75' : 'hover:shadow-md'}`}
+              className={`bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6 transition-all duration-200 ${task.completed ? 'opacity-75' : 'hover:shadow-md'}`}
             >
               <div className="flex items-start space-x-4">
                 <button onClick={() => handleToggleCompletion(task._id)} className="mt-1 flex-shrink-0">
@@ -302,11 +302,11 @@ const Tasks = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className={`text-lg font-medium ${task.completed ? 'text-gray-500 dark:text-gray-400 line-through' : 'text-gray-900 dark:text-white'}`}>
+                      <h3 className={`text-lg font-medium ${task.completed ? 'text-[var(--text-primary)] line-through' : 'text-[var(--text-primary)'}`}>
                         {task.title}
                       </h3>
                       {task.description && (
-                        <p className={`mt-1 text-sm ${task.completed ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-400'}`}>
+                        <p className={`mt-1 text-sm ${task.completed ? 'text-[var(--text-secondary)]' : 'text-[var(--text-secondary)]'}`}>
                           {task.description}
                         </p>
                       )}
@@ -331,7 +331,7 @@ const Tasks = () => {
                       {task.priority}
                     </span>
                     {task.dueDate && (
-                      <span className="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+                      <span className="inline-flex items-center text-xs text-[var(--text-secondary)]">
                         <Calendar className="w-3 h-3 mr-1" />
                         {formatDate(task.dueDate)}
                       </span>
@@ -347,16 +347,16 @@ const Tasks = () => {
       {/* Add/Edit Task Modal */}
       {(showAddModal || editingTask) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editingTask ? 'Edit Task' : 'Add New Task'}</h2>
+                <h2 className="text-xl font-bold text-[var(--primary)]">{editingTask ? 'Edit Task' : 'Add New Task'}</h2>
                 <button
                   onClick={() => {
                     setShowAddModal(false);
                     handleCancelEdit();
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -364,38 +364,38 @@ const Tasks = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Task Title *</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Task Title *</label>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
                     placeholder="Enter task title"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
                     placeholder="Enter task description (optional)"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
                     <select
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
                     >
                       <option value="academic">Academic</option>
                       <option value="personal">Personal</option>
@@ -406,12 +406,12 @@ const Tasks = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Priority</label>
                     <select
                       name="priority"
                       value={formData.priority}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -422,13 +422,13 @@ const Tasks = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due Date</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Due Date</label>
                   <input
                     type="date"
                     name="dueDate"
                     value={formData.dueDate}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
                   />
                 </div>
 
@@ -445,7 +445,7 @@ const Tasks = () => {
                       setShowAddModal(false);
                       handleCancelEdit();
                     }}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg transition-colors"
+                    className="flex-1 bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border-color)] py-2 px-4 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
