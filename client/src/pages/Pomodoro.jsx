@@ -267,11 +267,11 @@ const Pomodoro = () => {
   const getModeInfo = () => {
     switch (mode) {
       case 'work':
-        return { title: 'Focus Time', icon: BookOpen, color: 'text-red-600', bgColor: 'bg-red-50 dark:bg-red-900/20', borderColor: 'border-red-200 dark:border-red-800' };
+        return { title: 'Focus Time', icon: BookOpen, color: 'text-red-600', bgColor: 'bg-red-900/20', borderColor: 'border-red-800' };
       case 'shortBreak':
-        return { title: 'Short Break', icon: Coffee, color: 'text-green-600', bgColor: 'bg-green-50 dark:bg-green-900/20', borderColor: 'border-green-200 dark:border-green-800' };
+        return { title: 'Short Break', icon: Coffee, color: 'text-green-600', bgColor: 'dark:bg-green-900/20', borderColor: 'border-green-800' };
       case 'longBreak':
-        return { title: 'Long Break', icon: Coffee, color: 'text-blue-600', bgColor: 'bg-blue-50 dark:bg-blue-900/20', borderColor: 'border-blue-200 dark:border-blue-800' };
+        return { title: 'Long Break', icon: Coffee, color: 'text-blue-600', bgColor: 'bg-blue-900/20', borderColor: 'border-blue-800' };
       default: return {};
     }
   };
@@ -282,8 +282,8 @@ const Pomodoro = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Pomodoro Timer</h1>
-        <p className="text-gray-600 dark:text-gray-400">Stay focused with the Pomodoro Technique</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Pomodoro Timer</h1>
+        <p className="text-[var(--text-secondary)]">Stay focused with the Pomodoro Technique</p>
       </div>
 
       {/* Timer */}
@@ -306,8 +306,8 @@ const Pomodoro = () => {
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-mono font-bold text-gray-900 dark:text-white">{formatTime(timeLeft)}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">{Math.round(getProgress())}% complete</div>
+                <div className="text-4xl md:text-5xl font-mono font-bold text-[var(--text-primary)]">{formatTime(timeLeft)}</div>
+                <div className="text-sm text-[var(--text-secondary)] mt-2">{Math.round(getProgress())}% complete</div>
               </div>
             </div>
           </div>
@@ -317,84 +317,81 @@ const Pomodoro = () => {
         <div className="flex items-center justify-center space-x-4 mb-6">
           <button
             onClick={() => (isRunning ? handlePlayPause() : startTimer())}
-            className={`flex items-center justify-center w-16 h-16 rounded-full ${modeInfo.color} bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105`}
+            className={`flex items-center justify-center w-16 h-16 rounded-full ${modeInfo.color} bg-[var(--bg-secondary)] shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105`}
           >
             {isRunning ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
           </button>
-          <button onClick={handlePlayPause} className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-            {isRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-          </button>
-          <button onClick={handleReset} className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+          <button onClick={handleReset} className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-primary)] transition-colors">
             <RotateCcw className="w-5 h-5" />
           </button>
-          <button onClick={() => setShowSettings(true)} className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+          <button onClick={() => setShowSettings(true)} className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-primary)] transition-colors">
             <Settings className="w-5 h-5" />
           </button>
         </div>
 
         {/* Mode Switcher */}
         <div className="flex items-center justify-center space-x-2">
-          <button onClick={() => handleModeSwitch('work')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'work' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}>Work</button>
-          <button onClick={() => handleModeSwitch('shortBreak')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'shortBreak' ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}>Short Break</button>
-          <button onClick={() => handleModeSwitch('longBreak')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'longBreak' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}`}>Long Break</button>
+          <button onClick={() => handleModeSwitch('work')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'work' ? 'bg-red-600 text-white' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'}`}>Work</button>
+          <button onClick={() => handleModeSwitch('shortBreak')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'shortBreak' ? 'bg-green-600 text-white' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'}`}>Short Break</button>
+          <button onClick={() => handleModeSwitch('longBreak')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'longBreak' ? 'bg-blue-600 text-white' : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'}`}>Long Break</button>
         </div>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">{completedSessions}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Completed Sessions</div>
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6 text-center">
+          <div className="text-2xl font-bold text-[var(--text-primary)] mb-2">{completedSessions}</div>
+          <div className="text-sm text-[var(--text-secondary)]">Completed Sessions</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">{formatDuration(totalWorkTime)}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Total Focus Time</div>
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6 text-center">
+          <div className="text-2xl font-bold text-[var(--text-primary)] mb-2">{formatDuration(totalWorkTime)}</div>
+          <div className="text-sm text-[var(--text-secondary)]">Total Focus Time</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">{Math.ceil(completedSessions / settings.longBreakInterval)}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Pomodoro Cycles</div>
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6 text-center">
+          <div className="text-2xl font-bold text-[var(--text-primary)] mb-2">{Math.ceil(completedSessions / settings.longBreakInterval)}</div>
+          <div className="text-sm text-[var(--text-secondary)]">Pomodoro Cycles</div>
         </div>
       </div>
 
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-xl max-w-md w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Timer Settings</h2>
-                <button onClick={() => setShowSettings(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">×</button>
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">Timer Settings</h2>
+                <button onClick={() => setShowSettings(false)} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">×</button>
               </div>
 
               <div className="space-y-4">
                 {/* Work Duration */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Work Duration (minutes)</label>
-                  <input type="number" min="1" max="90" value={settings.workDuration} onChange={(e) => setSettings(prev => ({ ...prev, workDuration: parseInt(e.target.value) || 25 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Work Duration (minutes)</label>
+                  <input type="number" min="1" max="90" value={settings.workDuration} onChange={(e) => setSettings(prev => ({ ...prev, workDuration: parseInt(e.target.value) || 25 }))} className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"/>
                 </div>
                 {/* Short Break Duration */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Short Break Duration (minutes)</label>
-                  <input type="number" min="1" max="60" value={settings.shortBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, shortBreakDuration: parseInt(e.target.value) || 5 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Short Break Duration (minutes)</label>
+                  <input type="number" min="1" max="60" value={settings.shortBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, shortBreakDuration: parseInt(e.target.value) || 5 }))} className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"/>
                 </div>
                 {/* Long Break Duration */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Long Break Duration (minutes)</label>
-                  <input type="number" min="1" max="120" value={settings.longBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, longBreakDuration: parseInt(e.target.value) || 15 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Long Break Duration (minutes)</label>
+                  <input type="number" min="1" max="120" value={settings.longBreakDuration} onChange={(e) => setSettings(prev => ({ ...prev, longBreakDuration: parseInt(e.target.value) || 15 }))} className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"/>
                 </div>
                 {/* Long Break Interval */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Long Break Interval (sessions)</label>
-                  <input type="number" min="2" max="12" value={settings.longBreakInterval} onChange={(e) => setSettings(prev => ({ ...prev, longBreakInterval: parseInt(e.target.value) || 4 }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"/>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Long Break Interval (sessions)</label>
+                  <input type="number" min="2" max="12" value={settings.longBreakInterval} onChange={(e) => setSettings(prev => ({ ...prev, longBreakInterval: parseInt(e.target.value) || 4 }))} className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"/>
                 </div>
 
                 {/* Auto-start & Sound */}
                 <div className="space-y-3">
-                  <label className="flex items-center"><input type="checkbox" checked={settings.autoStartBreaks} onChange={(e)=>setSettings(prev=>({...prev,autoStartBreaks:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Auto-start breaks</span></label>
-                  <label className="flex items-center"><input type="checkbox" checked={settings.autoStartWork} onChange={(e)=>setSettings(prev=>({...prev,autoStartWork:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Auto-start work sessions</span></label>
+                  <label className="flex items-center"><input type="checkbox" checked={settings.autoStartBreaks} onChange={(e)=>setSettings(prev=>({...prev,autoStartBreaks:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-[var(--text-secondary)]">Auto-start breaks</span></label>
+                  <label className="flex items-center"><input type="checkbox" checked={settings.autoStartWork} onChange={(e)=>setSettings(prev=>({...prev,autoStartWork:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><span className="ml-2 text-sm text-[var(--text-secondary)]">Auto-start work sessions</span></label>
                   <label className="flex items-center">
                     <input type="checkbox" checked={settings.soundEnabled} onChange={(e)=>setSettings(prev=>({...prev,soundEnabled:e.target.checked}))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
-                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                    <span className="ml-2 text-sm text-[var(--text-secondary)] flex items-center">
                       Sound notifications {settings.soundEnabled ? <Volume2 className="w-4 h-4 ml-1"/> : <VolumeX className="w-4 h-4 ml-1"/>}
                     </span>
                   </label>

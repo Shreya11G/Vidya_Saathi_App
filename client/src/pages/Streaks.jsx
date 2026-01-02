@@ -56,25 +56,25 @@ const Streaks = () => {
     if (streak === 0) {
       return {
         color: 'text-gray-500',
-        bgColor: 'bg-gray-100 dark:bg-gray-700',
+        bgColor: 'bg-[var(--bg-secondary)]',
         message: 'Start your streak today!'
       };
     } else if (streak < 7) {
       return {
         color: 'text-blue-600',
-        bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+        bgColor: 'bg-[var(--bg-secondary)]',
         message: 'Building momentum!'
       };
     } else if (streak < 30) {
       return {
         color: 'text-green-600',
-        bgColor: 'bg-green-100 dark:bg-green-900/20',
+        bgColor: 'bg-green-900/20',
         message: 'Great consistency!'
       };
     } else {
       return {
         color: 'text-orange-600',
-        bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        bgColor: 'bg-orange-900/20',
         message: 'Streak master!'
       };
     }
@@ -85,13 +85,13 @@ const Streaks = () => {
   const getAchievementColor = (category) => {
     switch (category) {
       case 'streak':
-        return 'bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-400';
+        return 'bg-orange-900/20 text-orange-400';
       case 'tasks':
-        return 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400';
+        return 'bg-blue-900/20 text-blue-400';
       case 'daily':
-        return 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400';
+        return 'bg-green-900/20 text-green-400';
       default:
-        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400';
+        return 'bg-[var(--bg-secondary)] text-gray-800 dark:text-gray-400';
     }
   };
 
@@ -130,7 +130,7 @@ const Streaks = () => {
   if (!streakData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 dark:text-gray-400">Failed to load streak data</p>
+        <p className="text-[var(--text-secondary)]">Failed to load streak data</p>
       </div>
     );
   }
@@ -142,10 +142,10 @@ const Streaks = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Streaks & Progress
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-[var(--text-secondary)]">
             Track your consistency and celebrate achievements
           </p>
         </div>
@@ -204,25 +204,25 @@ const Streaks = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Tasks */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tasks</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Total Tasks</p>
+              <p className="text-3xl font-bold text-blue-400">
                 {streakData.statistics.totalTasksAllTime}
               </p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-12 h-12 bg-blue-900/20 rounded-lg flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-blue-400" />
             </div>
           </div>
         </div>
 
         {/* Average Tasks */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Daily Average</p>
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Daily Average</p>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {streakData.statistics.averageTasksPerDay}
               </p>
@@ -234,10 +234,10 @@ const Streaks = () => {
         </div>
 
         {/* Streak Health */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Streak Health</p>
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Streak Health</p>
               <p className="text-3xl font-bold" style={{ color: streakData.streakHealth.color }}>
                 {streakData.streakHealth.score}%
               </p>
@@ -252,14 +252,14 @@ const Streaks = () => {
         </div>
 
         {/* Most Productive Day */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Best Day</p>
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Best Day</p>
+              <p className="text-3xl font-bold text-orange-400">
                 {streakData.statistics.mostProductiveDay?.day || 'N/A'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-[var(--text-secondary)]">
                 {streakData.statistics.mostProductiveDay?.tasks || 0} tasks
               </p>
             </div>
@@ -271,20 +271,20 @@ const Streaks = () => {
       </div>
 
       {/* Activity Chart */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
             Activity Overview
           </h3>
           
           {/* Period Selector */}
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex bg-[var(--bg-primary)] rounded-lg p-1">
             <button
               onClick={() => setSelectedPeriod('7days')}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 selectedPeriod === '7days'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400'
+                  ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-sm'
+                  : 'text-[var(--text-secondary)]'
               }`}
             >
               7 Days
@@ -293,8 +293,8 @@ const Streaks = () => {
               onClick={() => setSelectedPeriod('30days')}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 selectedPeriod === '30days'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400'
+                  ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm'
+                  : 'text-[var(--text-secondary)]'
               }`}
             >
               30 Days
@@ -316,16 +316,16 @@ const Streaks = () => {
                     <div className="h-32 flex items-end justify-center mb-2">
                       <div
                         className={`w-8 rounded-t transition-all duration-300 ${
-                          day.tasks > 0 ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
+                          day.tasks > 0 ? 'bg-blue-500' : 'bg-[var(--bg-primary)]'
                         }`}
                         style={{ height: `${height}%` }}
                         title={`${day.tasks} tasks on ${formatDate(day.date)}`}
                       />
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       {day.dayName}
                     </div>
-                    <div className="text-xs font-medium text-gray-900 dark:text-white">
+                    <div className="text-xs font-medium text-[var(--text-condary)]">
                       {day.tasks}
                     </div>
                   </div>
@@ -344,7 +344,7 @@ const Streaks = () => {
                     key={index}
                     className={`w-6 h-6 rounded transition-all duration-200 ${
                       day.tasks === 0
-                        ? 'bg-gray-100 dark:bg-gray-700'
+                        ? 'bg-[var(--bg-primary)]'
                         : intensity > 0.75
                         ? 'bg-green-600'
                         : intensity > 0.5
@@ -363,10 +363,10 @@ const Streaks = () => {
       </div>
 
       {/* Achievements */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
         <div className="flex items-center space-x-2 mb-6">
           <Award className="w-6 h-6 text-yellow-500" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
             Achievements
           </h3>
         </div>
@@ -374,7 +374,7 @@ const Streaks = () => {
         {streakData.achievements.length === 0 ? (
           <div className="text-center py-8">
             <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[var(--text-secondary)]">
               Complete tasks and maintain streaks to unlock achievements!
             </p>
           </div>
