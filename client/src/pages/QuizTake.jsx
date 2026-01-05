@@ -10,7 +10,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-// import axios from 'axios';
+
 import api from '../api/axios';
 
 
@@ -175,20 +175,20 @@ const QuizTake = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               {fileName}
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-sm text-[var(--text-primary)] mt-1">
               Question {currentQuestionIndex + 1} of {totalQuestions}
             </p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-[var(--text-primary)]">
                 Answered
               </div>
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
+              <div className="text-lg font-semibold text-[var(--text-secondary)]">
                 {answeredCount}/{totalQuestions}
               </div>
             </div>
@@ -196,8 +196,8 @@ const QuizTake = () => {
             <div
               className={`px-4 py-3 rounded-lg flex items-center gap-2 ${
                 timeLeft <= 10
-                  ? 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                  : 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                  ? 'bg-red-900/20 text-red-400'
+                  : 'bg-blue-900/20 text-blue-400'
               }`}
             >
               <Clock className="w-5 h-5" />
@@ -206,7 +206,7 @@ const QuizTake = () => {
           </div>
         </div>
 
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2">
           <div
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
@@ -221,14 +221,14 @@ const QuizTake = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6"
+          className="bg-[var(--bg-secondary)] rounded-xl shadow-lg border border-[var(--border-color)] mb-6"
         >
           <div className="p-8">
             <div className="flex items-start gap-4 mb-8">
               <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold flex-shrink-0">
                 {currentQuestionIndex + 1}
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white leading-relaxed">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] leading-relaxed">
                 {currentQuestion.question}
               </h2>
             </div>
@@ -244,8 +244,8 @@ const QuizTake = () => {
                     onClick={() => handleAnswerSelect(index)}
                     className={`w-full p-4 rounded-lg border-2 text-left transition-all transform hover:scale-[1.02] ${
                       isSelected
-                        ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                        ? 'border-blue-600 bg-blue-900/20'
+                        : 'border-gray-700 hover:border-blue-300'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -253,12 +253,12 @@ const QuizTake = () => {
                         className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold flex-shrink-0 ${
                           isSelected
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                            : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                         }`}
                       >
                         {optionLabels[index]}
                       </div>
-                      <span className="text-gray-900 dark:text-white">
+                      <span className="text-[var(--text-primary)]">
                         {option}
                       </span>
                     </div>
@@ -268,8 +268,8 @@ const QuizTake = () => {
             </div>
 
             {getSelectedAnswer() === null && (
-              <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/10 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+              <div className="mt-6 p-4 bg-yellow-900/10 rounded-lg border border-yellow-800">
+                <div className="flex items-center gap-2 text-yellow-200">
                   <AlertCircle className="w-5 h-5" />
                   <span className="text-sm font-medium">
                     Please select an answer before moving to the next question
@@ -285,7 +285,7 @@ const QuizTake = () => {
         <button
           onClick={handlePreviousQuestion}
           disabled={currentQuestionIndex === 0}
-          className="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] font-medium rounded-lg hover:bg-[var(--bg-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <ChevronLeft className="w-5 h-5" />
           Previous

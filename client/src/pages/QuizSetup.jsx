@@ -78,10 +78,10 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
           Quiz Setup
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-[var(--text-seondary)]">
           Configure your quiz settings before you begin
         </p>
       </motion.div>
@@ -90,22 +90,22 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6"
+        className="bg-[var(--bg-secondary)] rounded-xl shadow-lg border border-[var(--border-color)] mb-6"
       >
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-[var(--border-color)]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-12 h-12 bg-[var(--bg-primary)] rounded-lg flex items-center justify-center flex-shrink-0">
+              <FileText className="w-6 h-6 text-[var(--text-primary)]" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">
                 {fileName}
               </h3>
               <div className="flex items-center gap-4 mt-1">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-[var(--text-primary)]">
                   {formatFileSize(fileSize)}
                 </span>
-                <span className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                <span className="text-sm text-green-400 flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" />
                   {totalQuestions} questions generated
                 </span>
@@ -115,7 +115,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
         </div>
 
         <div className="p-8">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-6">
             How many questions would you like to attempt?
           </h2>
 
@@ -128,21 +128,21 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
                   relative p-6 rounded-xl border-2 transition-all transform hover:scale-105
                   ${
                     selectedCount === count
-                      ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                      ? 'border-blue-600 bg-blue-900/20'
+                      : 'border-gray-700 hover:border-blue-300'
                   }
                 `}
               >
                 {selectedCount === count && (
                   <div className="absolute top-2 right-2">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <CheckCircle2 className="w-5 h-5 text-blue-400" />
                   </div>
                 )}
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                  <div className="text-3xl font-bold text-[var(--text-secondary)] mb-1">
                     {count}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-[var(--text-primary)]">
                     questions
                   </div>
                 </div>
@@ -151,32 +151,32 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+            <div className="bg-[var(--bg-secondary)] rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                <div className="w-10 h-10 bg-orange-900/20 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-orange-400" />
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-[var(--text-primary)]">
                     Estimated Time
                   </div>
-                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <div className="text-lg font-semibold text-[var(--text-secondary)]">
                     {estimatedTime} minutes
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+            <div className="bg-[var(--bg-secondary)] rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="w-10 h-10 bg-green-900/20 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-[var(--text-secondary)]">
                     Time Per Question
                   </div>
-                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <div className="text-lg font-semibold text-[var(--text-secondary)]">
                     60 seconds
                   </div>
                 </div>
@@ -184,29 +184,29 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
             </div>
           </div>
 
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800 mb-8">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] mb-8">
+            <h4 className="font-semibold text-[var(--text-primary)] mb-2">
               Quiz Rules:
             </h4>
-            <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+            <ul className="space-y-1 text-sm text-[var(--text-primary)]">
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span className="text-blue-400">•</span>
                 <span>Each question has 60 seconds to answer</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span className="text-blue-400">•</span>
                 <span>Timer automatically moves to next question when time expires</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span className="text-blue-400">•</span>
                 <span>You can navigate between questions using Previous/Next buttons</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span className="text-blue-400">•</span>
                 <span>Your progress is automatically saved</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span className="text-blue-400">•</span>
                 <span>Submit the quiz when you're done to see your results</span>
               </li>
             </ul>
@@ -216,7 +216,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
             <button
               onClick={() => navigate('/quiz/upload')}
               disabled={isStarting}
-              className="px-6 py-3 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 text-[var(--text-primary)] font-medium rounded-lg hover:bg-[var(--bg-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>

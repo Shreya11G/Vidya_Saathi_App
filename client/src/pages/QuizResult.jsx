@@ -60,10 +60,10 @@ const QuizResult = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
           Quiz Results
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">{fileName}</p>
+        <p className="text-[var(--text-secondary)]">{fileName}</p>
       </motion.div>
 
       <motion.div
@@ -136,18 +136,18 @@ const QuizResult = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+          className="bg-[var(--bg-secondary)] rounded-xl p-6 shadow-lg border border-[var(--border-color)]"
         >
           <div className="flex items-center gap-3 mb-4">
-            <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Clock className="w-5 h-5 text-[var(--text-secondary)]" />
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
               Time Spent
             </h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-[var(--text-secondary)]">
             {formatTime(timeSpent)}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-[var(--text-secondary)] mt-2">
             Average: {Math.round(timeSpent / totalQuestions)}s per question
           </p>
         </motion.div>
@@ -156,18 +156,18 @@ const QuizResult = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+          className="bg-[var(--bg-secondary)] rounded-xl p-6 shadow-lg border border-[var(--border-color)]"
         >
           <div className="flex items-center gap-3 mb-4">
-            <TrendingUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <TrendingUp className="w-5 h-5 text-[var(--text-secondary)]" />
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
               Accuracy
             </h3>
           </div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-[var(--text-secondary)]">
             {percentage}%
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-[var(--text-secondary)] mt-2">
             {correctAnswers} out of {totalQuestions} correct
           </p>
         </motion.div>
@@ -177,13 +177,13 @@ const QuizResult = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8"
+        className="bg-[var(--bg-secondary)] rounded-xl shadow-lg border border-[var(--border-color)] mb-8"
       >
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className="p-6 border-b border-[var(--border-color)]">
+          <h3 className="text-xl font-semibold text-[var(--text-primary)]">
             Detailed Answer Review
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             Review each question with explanations
           </p>
         </div>
@@ -192,7 +192,7 @@ const QuizResult = () => {
           {detailedAnswers.map((answer, index) => (
             <div
               key={answer.questionId}
-              className="border border-gray-200 dark:border-gray-700 rounded-lg p-5"
+              className="border border-[var(--border-color)] rounded-lg p-5"
             >
               <div className="flex items-start gap-3 mb-4">
                 <div
@@ -200,15 +200,15 @@ const QuizResult = () => {
                   w-8 h-8 rounded-lg flex items-center justify-center font-bold flex-shrink-0
                   ${
                     answer.isCorrect
-                      ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                      : 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400'
+                      ? 'bg-green-900/20 text-green-400'
+                      : 'bg-red-900/20 text-red-400'
                   }
                 `}
                 >
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-900 dark:text-white mb-3">
+                  <p className="font-semibold text-[var(--text-secondary)] mb-3">
                     {answer.question}
                   </p>
 
@@ -224,25 +224,25 @@ const QuizResult = () => {
                           p-3 rounded-lg border
                           ${
                             isCorrectAnswer
-                              ? 'bg-green-50 dark:bg-green-900/10 border-green-500'
+                              ? 'bg-green-900/10 border-green-500'
                               : isUserAnswer && !answer.isCorrect
-                              ? 'bg-red-50 dark:bg-red-900/10 border-red-500'
-                              : 'border-gray-200 dark:border-gray-700'
+                              ? 'bg-red-900/10 border-red-500'
+                              : 'border-[var(--border-color)]'
                           }
                         `}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">
+                            <span className="font-semibold text-[var(--text-primary)]">
                               {optionLabels[optIndex]}.
                             </span>
-                            <span className="text-gray-900 dark:text-white">
+                            <span className="text-[var(--text-primary)]">
                               {option}
                             </span>
                             {isCorrectAnswer && (
-                              <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400 ml-auto" />
+                              <CheckCircle2 className="w-4 h-4 text-green-400 ml-auto" />
                             )}
                             {isUserAnswer && !answer.isCorrect && (
-                              <XCircle className="w-4 h-4 text-red-600 dark:text-red-400 ml-auto" />
+                              <XCircle className="w-4 h-4 text-red-400 ml-auto" />
                             )}
                           </div>
                         </div>
@@ -250,11 +250,11 @@ const QuizResult = () => {
                     })}
                   </div>
 
-                  <div className="bg-blue-50 dark:bg-blue-900/10 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+                  <div className="bg-[var(--bg-secondary)] rounded-lg p-3 border border-[var(--border-color)]">
+                    <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                       Explanation:
                     </p>
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {answer.explanation}
                     </p>
                   </div>
@@ -268,7 +268,7 @@ const QuizResult = () => {
       <div className="flex justify-center gap-4">
         <button
           onClick={() => navigate('/dashboard')}
-          className="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-secondary)] font-medium rounded-lg hover:bg-[var(--bg-primary)] transition-colors flex items-center gap-2"
         >
           <Home className="w-5 h-5" />
           Back to Dashboard
