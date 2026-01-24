@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-/**
- * Theme Context
- * Supports: light | dark | pink-blue
- * Tailwind dark mode + CSS variables
- */
+
+ //Theme Context
+ //Supports: light | dark | pink-blue
+
+
 
 const ThemeContext = createContext();
 
@@ -21,11 +21,10 @@ export const ThemeProvider = ({ children }) => {
     return localStorage.getItem("vidyasathi-theme") || "light";
   });
 
-  /**
-   * Apply theme styles and classes
-   */
+    // Apply theme styles and classes
+
   useEffect(() => {
-    const root = document.documentElement; // ✅ Tailwind uses <html>
+    const root = document.documentElement; 
 
     // Remove all theme-related classes
     root.classList.remove("dark", "pink-blue");
@@ -35,7 +34,6 @@ export const ThemeProvider = ({ children }) => {
       root.classList.add("dark");
     }
 
-    // Apply CSS variables
     switch (theme) {
       case "light":
         setLightTheme(root);
@@ -53,9 +51,8 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem("vidyasathi-theme", theme);
   }, [theme]);
 
-  /**
-   * Toggle between themes
-   */
+    // Toggle between themes
+   
   const toggleTheme = () => {
     setTheme((prev) =>
       prev === "light" ? "dark" : prev === "dark" ? "pink-blue" : "light"

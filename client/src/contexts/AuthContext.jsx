@@ -2,11 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-/**
- * Authentication Context
- * Manages user authentication state and provides auth-related functions
- * Uses HTTP-only cookies for secure token storage
- */
+//  Authentication Context
+//  Manages user authentication state and provides auth-related functions
+//  Uses HTTP-only cookies for secure token storage
 
 // Configure axios defaults
 axios.defaults.baseURL = 'http://localhost:5000/api';
@@ -47,9 +45,8 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  /**
-   * Login function
-   */
+  //  Login function
+  
   const login = async (email, password) => {
     try {
       const response = await axios.post('/auth/login', { email, password });
@@ -65,9 +62,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Register function
-   */
+  
+  //  Register function
+   
   const register = async (userData) => {
     try {
       const response = await axios.post('/auth/register', userData);
@@ -83,9 +80,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Logout function
-   */
+ 
+  //  Logout function
+
   const logout = async () => {
     try {
       await axios.post('/auth/logout');
@@ -97,9 +94,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Update Profile function
-   */
+  
+    // Update Profile function
+   
   const updateProfile = async (profileData) => {
     try {
       const response = await axios.put('/auth/profile', profileData);
@@ -115,9 +112,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Refresh User function
-   */
+  
+  //  Refresh User function
+   
   const refreshUser = async () => {
     try {
       const response = await axios.get('/auth/profile');

@@ -11,12 +11,9 @@ Zap
 } from 'lucide-react';
 
 // Memory Game Component
-//Flip-card memory game for stress relief and cognitive training
-//Features: Multiple difficulty levels, scoring system, timer, animations
-
 
 const MemoryGame = () => {
-// Game state management
+
 const [cards, setCards] = useState([]);
 const [flippedCards, setFlippedCards] = useState([]);
 const [gameStatus, setGameStatus] = useState('menu'); // 'menu' | 'playing' | 'completed'
@@ -27,7 +24,6 @@ timeElapsed: 0,
 score: 0
 });
 
-// Difficulty and settings
 const [selectedDifficulty, setSelectedDifficulty] = useState({
 name: 'Easy',
 gridSize: 4,
@@ -35,7 +31,7 @@ timeBonus: 100,
 description: '4x4 grid - Perfect for beginners'
 });
 
-// Timer management
+
 const [timerInterval, setTimerInterval] = useState(null);
 
 // Available difficulty levels

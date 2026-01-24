@@ -1,296 +1,305 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-Plus,
-Search,
-ExternalLink,
-Star,
-Trash2,
-Edit,
-X,
-Copy,
-Globe,
-BookOpen,
-Video,
-FileText,
-Code,
-Heart
-} from 'lucide-react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import LoadingSpinner from '../components/LoadingSpinner';
-
+  Plus,
+  Search,
+  ExternalLink,
+  Star,
+  Trash2,
+  Edit,
+  X,
+  Copy,
+  Globe,
+  BookOpen,
+  Video,
+  FileText,
+  Code,
+  Heart,
+} from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Links = () => {
-// State for storing all user links
-const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState([]);
 
-// State for loading indicator
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-// State for controlling add/edit modal visibility
-const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-// State for the link being edited (null when adding new)
-const [editingLink, setEditingLink] = useState(null);
+  const [editingLink, setEditingLink] = useState(null);
 
-// State for search functionality
-const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-// State for category filtering
-const [filterCategory, setFilterCategory] = useState('all');
+  const [filterCategory, setFilterCategory] = useState("all");
 
-// State for favorites filtering
-const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-// Form data state for add/edit modal
-const [formData, setFormData] = useState({
-title: '',
-url: '',
-description: '',
-category: 'study_material',
-subject: '',
-tags: []
-});
+  const [formData, setFormData] = useState({
+    title: "",
+    url: "",
+    description: "",
+    category: "study_material",
+    subject: "",
+    tags: [],
+  });
 
-// Available categories for links
-const categories = [
-{ value: 'study_material', label: 'Study Material', icon: BookOpen },
-{ value: 'tutorial', label: 'Tutorial', icon: Video },
-{ value: 'documentation', label: 'Documentation', icon: FileText },
-{ value: 'video_lecture', label: 'Video Lecture', icon: Video },
-{ value: 'research_paper', label: 'Research Paper', icon: FileText },
-{ value: 'tool', label: 'Tool', icon: Code },
-{ value: 'reference', label: 'Reference', icon: Globe },
-{ value: 'course', label: 'Course', icon: BookOpen },
-{ value: 'practice', label: 'Practice', icon: Code },
-{ value: 'other', label: 'Other', icon: Globe }
-];
+  // Available categories for links
+  const categories = [
+    { value: "study_material", label: "Study Material", icon: BookOpen },
+    { value: "tutorial", label: "Tutorial", icon: Video },
+    { value: "documentation", label: "Documentation", icon: FileText },
+    { value: "video_lecture", label: "Video Lecture", icon: Video },
+    { value: "research_paper", label: "Research Paper", icon: FileText },
+    { value: "tool", label: "Tool", icon: Code },
+    { value: "reference", label: "Reference", icon: Globe },
+    { value: "course", label: "Course", icon: BookOpen },
+    { value: "practice", label: "Practice", icon: Code },
+    { value: "other", label: "Other", icon: Globe },
+  ];
 
+  //Fetch all links from backend on component mount
 
-//Fetch all links from backend on component mount
-  
   useEffect(() => {
-  fetchLinks();
+    fetchLinks();
   }, []);
 
-const fetchLinks = async () => {
-try {
-setLoading(true);
-const response = await axios.get('/links');
-setLinks(response.data.data.links);
-} catch (error) {
-console.error('Failed to fetch links:', error);
-toast.error('Failed to load links');
-} finally {
-setLoading(false);
-}
-};
-
-const handleInputChange = (e) => {
-const { name, value } = e.target;
-setFormData(prev => ({ ...prev, [name]: value }));
-};
-
-const handleTagInput = (e) => {
-if (e.key === 'Enter' || e.key === ',') {
-e.preventDefault();
-const input = e.target;
-const tag = input.value.trim();
-if (tag && !formData.tags.includes(tag)) {
-setFormData(prev => ({
-...prev,
-tags: [...prev.tags, tag]
-}));
-input.value = '';
-}
-}
-};
-
-const removeTag = (tagToRemove) => {
-setFormData(prev => ({
-...prev,
-tags: prev.tags.filter(tag => tag !== tagToRemove)
-}));
-};
-
-const resetForm = () => {
-setFormData({
-title: '',
-url: '',
-description: '',
-category: 'study_material',
-subject: '',
-tags: []
-});
-};
-
-const isValidUrl = (url) => {
-try {
-new URL(url.startsWith('http') ? url : `https://${url}`);
-return true;
-} catch {
-return false;
-}
-};
-
-const handleSubmit = async (e) => {
-e.preventDefault();
-
-
-if (!formData.title.trim()) {
-  toast.error('Link title is required');
-  return;
-}
-if (!formData.url.trim()) {
-  toast.error('URL is required');
-  return;
-}
-if (!isValidUrl(formData.url)) {
-  toast.error('Please enter a valid URL');
-  return;
-}
-
-try {
-  let processedUrl = formData.url.trim();
-  if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
-    processedUrl = 'https://' + processedUrl;
-  }
-
-  const linkData = {
-    ...formData,
-    url: processedUrl,
-    title: formData.title.trim(),
-    description: formData.description.trim(),
-    subject: formData.subject.trim()
+  const fetchLinks = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/links");
+      setLinks(response.data.data.links);
+    } catch (error) {
+      console.error("Failed to fetch links:", error);
+      toast.error("Failed to load links");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (editingLink) {
-    await axios.put(`/links/${editingLink._id}`, linkData);
-    toast.success('Link updated successfully');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTagInput = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const input = e.target;
+      const tag = input.value.trim();
+      if (tag && !formData.tags.includes(tag)) {
+        setFormData((prev) => ({
+          ...prev,
+          tags: [...prev.tags, tag],
+        }));
+        input.value = "";
+      }
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      url: "",
+      description: "",
+      category: "study_material",
+      subject: "",
+      tags: [],
+    });
+  };
+
+  const isValidUrl = (url) => {
+    try {
+      new URL(url.startsWith("http") ? url : `https://${url}`);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.title.trim()) {
+      toast.error("Link title is required");
+      return;
+    }
+    if (!formData.url.trim()) {
+      toast.error("URL is required");
+      return;
+    }
+    if (!isValidUrl(formData.url)) {
+      toast.error("Please enter a valid URL");
+      return;
+    }
+
+    try {
+      let processedUrl = formData.url.trim();
+      if (
+        !processedUrl.startsWith("http://") &&
+        !processedUrl.startsWith("https://")
+      ) {
+        processedUrl = "https://" + processedUrl;
+      }
+
+      const linkData = {
+        ...formData,
+        url: processedUrl,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        subject: formData.subject.trim(),
+      };
+
+      if (editingLink) {
+        await axios.put(`/links/${editingLink._id}`, linkData);
+        toast.success("Link updated successfully");
+        setEditingLink(null);
+      } else {
+        await axios.post("/links", linkData);
+        toast.success("Link added successfully");
+        setShowAddModal(false);
+      }
+
+      resetForm();
+      fetchLinks();
+    } catch (error) {
+      console.error("Failed to save link:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to save link";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleLinkClick = async (link) => {
+    try {
+      await axios.post(`/links/${link._id}/click`);
+      window.open(link.url, "_blank", "noopener,noreferrer");
+      setLinks((prev) =>
+        prev.map((l) =>
+          l._id === link._id
+            ? {
+                ...l,
+                clickCount: l.clickCount + 1,
+                lastVisited: new Date().toISOString(),
+              }
+            : l,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to record click:", error);
+      window.open(link.url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleToggleFavorite = async (linkId) => {
+    try {
+      await axios.patch(`/links/${linkId}/favorite`);
+      setLinks((prev) =>
+        prev.map((link) =>
+          link._id === linkId
+            ? { ...link, isFavorite: !link.isFavorite }
+            : link,
+        ),
+      );
+      toast.success("Favorite status updated");
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to update favorite";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleDeleteLink = async (linkId) => {
+    if (!window.confirm("Are you sure you want to delete this link?")) return;
+    try {
+      await axios.delete(`/links/${linkId}`);
+      toast.success("Link deleted successfully");
+      fetchLinks();
+    } catch (error) {
+      console.error("Failed to delete link:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to delete link";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleEditLink = (link) => {
+    setEditingLink(link);
+    setFormData({
+      title: link.title,
+      url: link.url,
+      description: link.description || "",
+      category: link.category,
+      subject: link.subject || "",
+      tags: link.tags,
+    });
+  };
+
+  const handleCancelEdit = () => {
     setEditingLink(null);
-  } else {
-    await axios.post('/links', linkData);
-    toast.success('Link added successfully');
-    setShowAddModal(false);
+    resetForm();
+  };
+
+  const handleCopyUrl = async (url) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("URL copied to clipboard");
+    } catch (error) {
+      console.error("Failed to copy URL:", error);
+      toast.error("Failed to copy URL");
+    }
+  };
+
+  const getCategoryIcon = (category) => {
+    const categoryConfig = categories.find((cat) => cat.value === category);
+    return categoryConfig ? categoryConfig.icon : Globe;
+  };
+
+  const filteredLinks = links.filter((link) => {
+    const matchesSearch =
+      link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (link.description &&
+        link.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      link.tags.some((tag) =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+
+    const matchesCategory =
+      filterCategory === "all" || link.category === filterCategory;
+    const matchesFavorites = !showFavoritesOnly || link.isFavorite;
+    return matchesSearch && matchesCategory && matchesFavorites;
+  });
+
+  const sortedLinks = filteredLinks.sort((a, b) => {
+    if (a.isFavorite && !b.isFavorite) return -1;
+    if (!a.isFavorite && b.isFavorite) return 1;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        {" "}
+        <LoadingSpinner size="large" />{" "}
+      </div>
+    );
   }
-  
-  resetForm();
-  fetchLinks();
-} catch (error) {
-  console.error('Failed to save link:', error);
-  const errorMessage = error.response?.data?.message || 'Failed to save link';
-  toast.error(errorMessage);
-}
 
-
-};
-
-const handleLinkClick = async (link) => {
-try {
-await axios.post(`/links/${link._id}/click`);
-window.open(link.url, '_blank', 'noopener,noreferrer');
-setLinks(prev => prev.map(l =>
-l._id === link._id
-? { ...l, clickCount: l.clickCount + 1, lastVisited: new Date().toISOString() }
-: l
-));
-} catch (error) {
-console.error('Failed to record click:', error);
-window.open(link.url, '_blank', 'noopener,noreferrer');
-}
-};
-
-const handleToggleFavorite = async (linkId) => {
-try {
-await axios.patch(`/links/${linkId}/favorite`);
-setLinks(prev => prev.map(link =>
-link._id === linkId
-? { ...link, isFavorite: !link.isFavorite }
-: link
-));
-toast.success('Favorite status updated');
-} catch (error) {
-console.error('Failed to toggle favorite:', error);
-const errorMessage = error.response?.data?.message || 'Failed to update favorite';
-toast.error(errorMessage);
-}
-};
-
-const handleDeleteLink = async (linkId) => {
-if (!window.confirm('Are you sure you want to delete this link?')) return;
-try {
-await axios.delete(`/links/${linkId}`);
-toast.success('Link deleted successfully');
-fetchLinks();
-} catch (error) {
-console.error('Failed to delete link:', error);
-const errorMessage = error.response?.data?.message || 'Failed to delete link';
-toast.error(errorMessage);
-}
-};
-
-const handleEditLink = (link) => {
-setEditingLink(link);
-setFormData({
-title: link.title,
-url: link.url,
-description: link.description || '',
-category: link.category,
-subject: link.subject || '',
-tags: link.tags
-});
-};
-
-const handleCancelEdit = () => {
-setEditingLink(null);
-resetForm();
-};
-
-const handleCopyUrl = async (url) => {
-try {
-await navigator.clipboard.writeText(url);
-toast.success('URL copied to clipboard');
-} catch (error) {
-console.error('Failed to copy URL:', error);
-toast.error('Failed to copy URL');
-}
-};
-
-const getCategoryIcon = (category) => {
-const categoryConfig = categories.find(cat => cat.value === category);
-return categoryConfig ? categoryConfig.icon : Globe;
-};
-
-const filteredLinks = links.filter(link => {
-const matchesSearch = link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-(link.description && link.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-link.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-
-
-const matchesCategory = filterCategory === 'all' || link.category === filterCategory;
-const matchesFavorites = !showFavoritesOnly || link.isFavorite;
-return matchesSearch && matchesCategory && matchesFavorites;
-
-
-});
-
-const sortedLinks = filteredLinks.sort((a, b) => {
-if (a.isFavorite && !b.isFavorite) return -1;
-if (!a.isFavorite && b.isFavorite) return 1;
-return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-});
-
-if (loading) {
-return ( <div className="flex items-center justify-center py-12"> <LoadingSpinner size="large" /> </div>
-);
-}
-
-return (
- <div className="space-y-6">
+  return (
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Link Keeper</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+            Link Keeper
+          </h1>
           <p className="text-[var(--text-secondary)]">
             Save and organize your important study resources
           </p>
@@ -305,8 +314,10 @@ return (
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm borderborder border-[var(--border-color)]
- p-6">
+      <div
+        className="bg-[var(--bg-secondary)] rounded-xl shadow-sm borderborder border-[var(--border-color)]
+ p-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div className="md:col-span-2">
@@ -330,7 +341,7 @@ return (
               className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-primary)]"
             >
               <option value="all">All Categories</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.value} value={category.value}>
                   {category.label}
                 </option>
@@ -368,12 +379,11 @@ return (
               No links found
             </h3>
             <p className="text-[var(--text-secondary)] mb-4">
-              {searchTerm || filterCategory !== 'all' || showFavoritesOnly
-                ? 'Try adjusting your search or filters'
-                : 'Start building your collection of important study resources'
-              }
+              {searchTerm || filterCategory !== "all" || showFavoritesOnly
+                ? "Try adjusting your search or filters"
+                : "Start building your collection of important study resources"}
             </p>
-            {!searchTerm && filterCategory === 'all' && !showFavoritesOnly && (
+            {!searchTerm && filterCategory === "all" && !showFavoritesOnly && (
               <button
                 onClick={() => setShowAddModal(true)}
                 className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -400,7 +410,7 @@ return (
                         <Heart className="w-4 h-4 text-red-500 fill-current" />
                       )}
                     </div>
-                    
+
                     {/* Actions */}
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
@@ -413,9 +423,15 @@ return (
                       <button
                         onClick={() => handleToggleFavorite(link._id)}
                         className={`p-1 rounded hover:bg-[var(--bg-primary)] transition-colors ${
-                          link.isFavorite ? 'text-red-500' : 'text-gray-500 hover:text-red-500'
+                          link.isFavorite
+                            ? "text-red-500"
+                            : "text-gray-500 hover:text-red-500"
                         }`}
-                        title={link.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                        title={
+                          link.isFavorite
+                            ? "Remove from favorites"
+                            : "Add to favorites"
+                        }
                       >
                         <Heart className="w-4 h-4" />
                       </button>
@@ -473,7 +489,8 @@ return (
                   {/* Link Footer */}
                   <div className="flex items-center justify-between text-xs text-[var(--text-primary)] mb-3">
                     <span className="capitalize">
-                      {categories.find(cat => cat.value === link.category)?.label || link.category}
+                      {categories.find((cat) => cat.value === link.category)
+                        ?.label || link.category}
                     </span>
                     <span>{link.clickCount} clicks</span>
                   </div>
@@ -500,7 +517,7 @@ return (
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                  {editingLink ? 'Edit Link' : 'Add New Link'}
+                  {editingLink ? "Edit Link" : "Add New Link"}
                 </h2>
                 <button
                   onClick={() => {
@@ -573,7 +590,7 @@ return (
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--bg-primary)] text-[var(--text-secondary)]"
                     >
-                      {categories.map(category => (
+                      {categories.map((category) => (
                         <option key={category.value} value={category.value}>
                           {category.label}
                         </option>
@@ -634,7 +651,7 @@ return (
                     type="submit"
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
                   >
-                    {editingLink ? 'Update Link' : 'Add Link'}
+                    {editingLink ? "Update Link" : "Add Link"}
                   </button>
                   <button
                     type="button"
@@ -653,7 +670,7 @@ return (
         </div>
       )}
     </div>
-);
+  );
 };
 
 export default Links;

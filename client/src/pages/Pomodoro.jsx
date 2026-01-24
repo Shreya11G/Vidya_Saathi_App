@@ -14,7 +14,7 @@ import { useAuth } from '../contexts/AuthContext';
 const STORAGE_KEYS = {
   MODE: 'pomodoro.mode',
   IS_RUNNING: 'pomodoro.isRunning',
-  END_AT: 'pomodoro.endAt',            // ms timestamp
+  END_AT: 'pomodoro.endAt',            
   SETTINGS: 'pomodoro.settings',
   COMPLETED: 'pomodoro.completed',
   TOTAL_WORK: 'pomodoro.totalWork',
@@ -25,10 +25,10 @@ const Pomodoro = () => {
 
   // ----- Settings (persisted) -----
   const defaultSettings = {
-    workDuration: user?.preferences?.pomodoroSettings?.workDuration || 25, // minutes
-    shortBreakDuration: 5,  // minutes
-    longBreakDuration: 15,  // minutes
-    longBreakInterval: 4,   // sessions
+    workDuration: user?.preferences?.pomodoroSettings?.workDuration || 25,
+    shortBreakDuration: 5,  
+    longBreakDuration: 15,  
+    longBreakInterval: 4, 
     autoStartBreaks: false,
     autoStartWork: false,
     soundEnabled: true,

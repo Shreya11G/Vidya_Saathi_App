@@ -100,13 +100,13 @@ let questions = [];
 
 // Handle the three most common backend formats safely
 if (Array.isArray(response.data.data)) {
-  // ✅ Case 1: backend returns array directly inside data
+  // Case 1: backend returns array directly inside data
   questions = response.data.data;
 } else if (response.data.data?.questions) {
-  // ✅ Case 2: backend returns nested { data: { questions: [...] } }
+  // Case 2: backend returns nested { data: { questions: [...] } }
   questions = response.data.data.questions;
 } else if (Array.isArray(response.data.questions)) {
-  // ✅ Case 3: backend returns { questions: [...] }
+  // Case 3: backend returns { questions: [...] }
   questions = response.data.questions;
 }
 
@@ -270,8 +270,8 @@ if (!questions || questions.length === 0) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Quiz Time</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Quiz Time</h1>
+          <p className="text-[var(--text-secondary)]">
             Upload documents and test your knowledge with AI-generated quizzes
           </p>
         </div>
@@ -287,23 +287,19 @@ if (!questions || questions.length === 0) {
         )}
       </div>
 
-      {/* --- Upload, Generating, Ready, In-progress, and Completed states below remain same --- */}
-      {/* I will keep them unchanged since you said “write things as it is don’t change functionality” */}
-      {/* Full JSX retained (same as your TSX), just without types */}
-
       {/* Upload State */}
       {quizStatus === 'upload' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-8">
           <div className="text-center">
             <Upload className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               Upload Your Document
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               Upload a Word document, PowerPoint presentation, or PDF file to generate quiz questions
             </p>
             <div
-              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
+              className="border-2 border-dashed border-[var(--border-color)] rounded-lg p-8 hover:border-blue-400 transition-colors cursor-pointer"
               onDragOver={handleDragOver}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
@@ -319,18 +315,18 @@ if (!questions || questions.length === 0) {
               {selectedFile ? (
                 <div className="text-center">
                   <div className="text-4xl mb-2">{getFileIcon(selectedFile.name)}</div>
-                  <p className="font-medium text-gray-900 dark:text-white">{selectedFile.name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="font-medium text-[var(--text-primary)]">{selectedFile.name}</p>
+                  <p className="text-sm text-[var(--text-primary)]">
                     {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
               ) : (
                 <div className="text-center">
                   <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-[var(--text-secondary)]">
                     Click to browse or drag and drop your file here
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                  <p className="text-sm text-[var(--text-secondary)] mt-2">
                     Supports: PDF, Word (.doc, .docx), PowerPoint (.ppt, .pptx)
                   </p>
                 </div>
@@ -361,12 +357,12 @@ if (!questions || questions.length === 0) {
       )}
   {/* Generating State */}
       {quizStatus === 'generating' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-12 text-center">
           <LoadingSpinner size="large" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mt-4 mb-2">
+          <h3 className="text-lg font-medium text-[var(--text-primary)] mt-4 mb-2">
             Generating Quiz Questions
           </h3>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-[var(--text-secondary)]">
             Our AI is analyzing your document and creating personalized quiz questions...
           </p>
         </div>
@@ -374,17 +370,17 @@ if (!questions || questions.length === 0) {
 
       {/* Ready State */}
       {quizStatus === 'ready' && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-8 text-center">
           <Award className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             Quiz Ready!
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-[var(--text-secondary)] mb-6">
             We've generated {quizQuestions.length} questions from your document. Ready to test your knowledge?
           </p>
           
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-center space-x-4 text-sm text-[var(--text-primary)]">
               <span>📄 {selectedFile?.name}</span>
               <span>•</span>
               <span>❓ {quizQuestions.length} Questions</span>
@@ -405,22 +401,22 @@ if (!questions || questions.length === 0) {
 
       {/* In Progress State */}
       {quizStatus === 'in-progress' && quizQuestions.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] overflow-hidden">
           {/* Quiz Header */}
-          <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+          <div className="bg-[var(--bg-primary)] px-6 py-4 border-b border-[var(--boder-color)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-sm font-medium text-[var(--text-primary)]">
                   Question {currentQuestionIndex + 1} of {quizQuestions.length}
                 </span>
-                <div className="w-48 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                <div className="w-48 bg-[var(--bg-secondary)] rounded-full h-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}
                   />
                 </div>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center space-x-2 text-sm text-[var(--text-secondary)">
                 <Clock className="w-4 h-4" />
                 <span>{formatTime(timeElapsed)}</span>
               </div>
@@ -430,7 +426,7 @@ if (!questions || questions.length === 0) {
           {/* Question Content */}
           <div className="p-6">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                 {quizQuestions[currentQuestionIndex].question}
               </h3>
               
@@ -444,21 +440,21 @@ if (!questions || questions.length === 0) {
                       onClick={() => handleAnswerSelect(index)}
                       className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 ${
                         isSelected
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-700'
+                          ? 'border-blue-500 bg-blue-900/20 text-blue-300'
+                          : 'border-gray-600 hover:border-gray-500 bg-gray-700'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                           isSelected
                             ? 'border-blue-500 bg-blue-500'
-                            : 'border-gray-300 dark:border-gray-600'
+                            : 'border-gray-600'
                         }`}>
                           {isSelected && (
                             <div className="w-2 h-2 bg-white rounded-full" />
                           )}
                         </div>
-                        <span className="text-gray-900 dark:text-white">
+                        <span className="text-[var(--text-primary)]">
                           {String.fromCharCode(65 + index)}. {option}
                         </span>
                       </div>
@@ -473,12 +469,12 @@ if (!questions || questions.length === 0) {
               <button
                 onClick={goToPreviousQuestion}
                 disabled={currentQuestionIndex === 0}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 ← Previous
               </button>
               
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-[var(--text-secondary)]">
                 {userAnswers.length} of {quizQuestions.length} answered
               </div>
               
@@ -496,24 +492,24 @@ if (!questions || questions.length === 0) {
 
       {/* Completed State */}
       {quizStatus === 'completed' && quizResult && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+        <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-8">
           <div className="text-center mb-8">
             <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${
-              quizResult.percentage >= 80 ? 'bg-green-100 dark:bg-green-900/20' :
-              quizResult.percentage >= 60 ? 'bg-yellow-100 dark:bg-yellow-900/20' :
-              'bg-red-100 dark:bg-red-900/20'
+              quizResult.percentage >= 80 ? 'bg-green-900/20' :
+              quizResult.percentage >= 60 ? 'bg-yellow-900/20' :
+              'bg-red-900/20'
             }`}>
               <Award className={`w-10 h-10 ${
-                quizResult.percentage >= 80 ? 'text-green-600 dark:text-green-400' :
-                quizResult.percentage >= 60 ? 'text-yellow-600 dark:text-yellow-400' :
-                'text-red-600 dark:text-red-400'
+                quizResult.percentage >= 80 ? 'text-green-400' :
+                quizResult.percentage >= 60 ? 'text-yellow-400' :
+                'text-red-400'
               }`} />
             </div>
             
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
               Quiz Completed!
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[var(--text-secondary)]">
               Here are your results
             </p>
           </div>
@@ -521,37 +517,37 @@ if (!questions || questions.length === 0) {
           {/* Results Summary */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              <div className="text-3xl font-bold text-blue-400">
                 {quizResult.score}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-[var(--text-secondary)]">
                 Correct Answers
               </div>
             </div>
             
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+              <div className="text-3xl font-bold text-purple-400">
                 {quizResult.percentage}%
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-400">
                 Score
               </div>
             </div>
             
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-3xl font-bold text-green-400">
                 {formatTime(quizResult.timeSpent)}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-[var(--text-secondary)]">
                 Time Spent
               </div>
             </div>
             
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+              <div className="text-3xl font-bold text-orange-400">
                 {quizResult.totalQuestions}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-400">
                 Total Questions
               </div>
             </div>
@@ -559,7 +555,7 @@ if (!questions || questions.length === 0) {
 
           {/* Detailed Results */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
               Question Review
             </h3>
             
@@ -572,8 +568,8 @@ if (!questions || questions.length === 0) {
                   key={question.id}
                   className={`p-4 rounded-lg border-2 ${
                     isCorrect
-                      ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
-                      : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
+                      ? 'border-green-800 bg-green-900/20'
+                      : 'border-red-800 bg-red-900/20'
                   }`}
                 >
                   <div className="flex items-start space-x-3">
@@ -588,21 +584,21 @@ if (!questions || questions.length === 0) {
                     </div>
                     
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-white mb-2">
+                      <p className="font-medium text-[var(--text-secondary)] mb-2">
                         {index + 1}. {question.question}
                       </p>
                       
                       <div className="text-sm space-y-1">
-                        <p className={`${isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                        <p className={`${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
                           Your answer: {question.options[userAnswer?.selectedOption || 0]}
                         </p>
                         {!isCorrect && (
-                          <p className="text-green-700 dark:text-green-300">
+                          <p className="text-green-300">
                             Correct answer: {question.options[question.correctAnswer]}
                           </p>
                         )}
                         {question.explanation && (
-                          <p className="text-gray-600 dark:text-gray-400 mt-2">
+                          <p className="text-[var(text-secondary)] mt-2">
                             💡 {question.explanation}
                           </p>
                         )}
@@ -615,7 +611,7 @@ if (!questions || questions.length === 0) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-[var(--border-color)]">
             <button
               onClick={resetQuiz}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"

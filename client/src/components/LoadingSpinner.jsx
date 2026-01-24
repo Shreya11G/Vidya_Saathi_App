@@ -1,10 +1,6 @@
 import React from 'react';
 
-/**
- * Loading Spinner Component
- * Reusable loading indicator with different size variants
- * Supports theme-aware styling
- */
+
 
 const LoadingSpinner = ({
   size = 'medium',
@@ -20,40 +16,17 @@ const LoadingSpinner = ({
 
   // Color classes
   const colorClasses = {
-    primary: 'text-blue-600 dark:text-blue-400',
-    secondary: 'text-purple-600 dark:text-purple-400',
+    primary: 'text-blue-400',
+    secondary: 'text-purple-400',
     white: 'text-white'
   };
 
-  const loadChatFromHistory = (session) => {
-  setActiveSessionId(session.id);
-
-  // Build a message pair: user question + AI response
-  const loadedMessages = [
-    {
-      id: `user-${Date.now()}-history`,
-      type: 'user',
-      content: session.question || session.title || 'Previous question',
-      timestamp: new Date(session.timestamp),
-    },
-    {
-      id: `ai-${Date.now()}-history`,
-      type: 'assistant',
-      content: session.response || session.lastMessage || 'No previous answer available.',
-      timestamp: new Date(session.timestamp),
-    },
-  ];
-
-  setMessages(loadedMessages);
-  scrollToBottom();
-
-};
-
-
   return (
-    <div className={`inline-block ${className}`}>
+    <div className={`inline-block ${className}`} role='status' aria-label='Loading'>
       <svg
-        className={`animate-spin ${sizeClasses[size]} ${colorClasses[color]}`}
+        className={`animate-spin ${
+          sizeClasses[size] || sizeClasses.medium
+        } ${colorClasses[color] || colorClasses.primary}`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -75,5 +48,4 @@ const LoadingSpinner = ({
     </div>
   );
 };
-
 export default LoadingSpinner;

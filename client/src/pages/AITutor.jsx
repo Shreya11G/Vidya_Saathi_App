@@ -188,7 +188,7 @@ const loadChatFromHistory = (session) => {
     ];
 
     setMessages(loadedMessages);
-    scrollToBottom(); // Optional: scroll down after loading
+    scrollToBottom(); 
   };
 
 return (

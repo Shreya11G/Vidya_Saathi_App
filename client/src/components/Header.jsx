@@ -2,18 +2,14 @@ import React from 'react';
 import { Menu, Sun, Moon, Palette } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-/**
- * Header Component
- * Top navigation bar with theme switcher and mobile menu toggle
- * Displays current page title and provides theme controls
- */
+
 
 const Header = ({ title, onMenuClick }) => {
   const { theme, toggleTheme } = useTheme();
 
-  /**
-   * Get theme icon based on current theme
-   */
+  
+   //Get theme icon based on current theme
+  
   const getThemeIcon = () => {
     switch (theme) {
       case 'light':
@@ -27,9 +23,8 @@ const Header = ({ title, onMenuClick }) => {
     }
   };
 
-  /**
-   * Get theme label for tooltip/accessibility
-   */
+  // Get theme label for tooltip/accessibility
+  
   const getThemeLabel = () => {
     switch (theme) {
       case 'light':
@@ -110,10 +105,7 @@ const Header = ({ title, onMenuClick }) => {
   );
 };
 
-/**
- * Current Time Component
- * Displays live updating current time
- */
+
 const CurrentTime = () => {
   const [time, setTime] = React.useState(new Date());
 

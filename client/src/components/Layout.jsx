@@ -3,19 +3,11 @@ import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
-/**
- * Layout Component
- * Provides the main application layout with sidebar and header
- * Handles responsive sidebar behavior and page structure
- */
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  /**
-   * Get page title based on current route
-   */
   const getPageTitle = () => {
     const path = location.pathname;
     switch (path) {
@@ -63,7 +55,7 @@ const Layout = ({ children }) => {
         </main>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Sidebar Overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"

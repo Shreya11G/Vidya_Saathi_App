@@ -3,12 +3,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
 
-/**
- * Protected Route Component
- * Ensures only authenticated users can access protected pages
- * Shows loading spinner during authentication check
- * Redirects to login page if user is not authenticated
- */
+
+//  Protected Route Component
+//  Ensures only authenticated users can access protected pages
+//  Shows loading spinner during authentication check
+//  Redirects to login page if user is not authenticated
+
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
