@@ -18,9 +18,9 @@ const router = express.Router();
 // Apply authentication middleware to all link routes
 router.use(authenticate);
 
-/**
- * Validation Rules for Link Creation
- */
+
+// Validation Rules for Link Creation
+
 const createLinkValidation = [
   body('title')
     .trim()
@@ -43,9 +43,9 @@ const createLinkValidation = [
     .withMessage('Invalid category')
 ];
 
-/**
- * Link CRUD Routes
- */
+
+// Link CRUD Routes
+
 
 // GET /api/links - Get all links for authenticated user
 router.get('/', getLinks);

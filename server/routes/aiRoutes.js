@@ -13,9 +13,9 @@ const router = express.Router();
 // Apply authentication middleware to all AI routes
 router.use(authenticate);
 
-/**
- * Validation Rules for AI Tutor Questions
- */
+
+// Validation Rules for AI Tutor Questions
+
 const tutorValidation = [
   body('question')
     .trim()
@@ -35,9 +35,9 @@ const tutorValidation = [
     .withMessage('Context cannot exceed 500 characters')
 ];
 
-/**
- * Validation Rules for Career Advice
- */
+
+// Validation Rules for Career Advice
+
 const careerValidation = [
   body('question')
     .trim()
@@ -51,9 +51,9 @@ const careerValidation = [
     .withMessage('Career field cannot exceed 100 characters')
 ];
 
-/**
- * AI Routes
- */
+
+// AI Routes
+
 
 // POST /api/ai/tutor - Ask AI tutor a question
 router.post('/tutor', tutorValidation, askTutor);

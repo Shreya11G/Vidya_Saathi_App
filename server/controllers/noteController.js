@@ -1,16 +1,7 @@
 import { validationResult } from 'express-validator';
 import Note from '../models/Note.js';
 
-/**
- * Note Controller
- * Handles all note-related operations including CRUD, search, and statistics
- * All operations are scoped to the authenticated user
- */
 
-/**
- * Get All Notes for User
- * Retrieves notes with optional filtering and pagination
- */
 export const getNotes = async (req, res) => {
   try {
     const {
@@ -85,10 +76,8 @@ export const getNotes = async (req, res) => {
   }
 };
 
-/**
- * Get Single Note
- * Retrieves a specific note by ID
- */
+// Get Single Note
+
 export const getNote = async (req, res) => {
   try {
     // Check validation results
@@ -127,10 +116,8 @@ export const getNote = async (req, res) => {
   }
 };
 
-/**
- * Create New Note
- * Creates a new note for the authenticated user
- */
+// Create New Note
+ 
 export const createNote = async (req, res) => {
   try {
     // Check validation results
@@ -184,10 +171,8 @@ export const createNote = async (req, res) => {
   }
 };
 
-/**
- * Update Note
- * Updates an existing note with new information
- */
+// Update Note
+
 export const updateNote = async (req, res) => {
   try {
     // Check validation results
@@ -249,10 +234,8 @@ export const updateNote = async (req, res) => {
   }
 };
 
-/**
- * Toggle Note Pin Status
- * Toggles the pinned status of a note
- */
+// Toggle Note Pin Status
+
 export const togglePin = async (req, res) => {
   try {
     // Check validation results
@@ -296,10 +279,8 @@ export const togglePin = async (req, res) => {
   }
 };
 
-/**
- * Toggle Note Favorite Status
- * Toggles the favorite status of a note
- */
+// Toggle Note Favorite Status
+ 
 export const toggleFavorite = async (req, res) => {
   try {
     // Check validation results
@@ -343,10 +324,8 @@ export const toggleFavorite = async (req, res) => {
   }
 };
 
-/**
- * Delete Note
- * Permanently deletes a note
- */
+// Delete Note
+
 export const deleteNote = async (req, res) => {
   try {
     // Check validation results
@@ -385,10 +364,8 @@ export const deleteNote = async (req, res) => {
   }
 };
 
-/**
- * Search Notes
- * Performs text search across note titles, content, and tags
- */
+// Search Notes
+
 export const searchNotes = async (req, res) => {
   try {
     const { q, category, isPinned, isArchived, limit = 20 } = req.query;
@@ -426,10 +403,8 @@ export const searchNotes = async (req, res) => {
   }
 };
 
-/**
- * Get Note Statistics
- * Returns comprehensive note statistics for the user
- */
+// Get Note Statistics
+
 export const getNoteStats = async (req, res) => {
   try {
     const stats = await Note.getUserStats(req.user._id);

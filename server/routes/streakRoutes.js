@@ -9,13 +9,13 @@ router.use(authenticate);
 
 
 //   Streak Routes
-//   Handles user streak tracking and statistics
+
 
 
 // GET /api/streaks - Get user streak information
 router.get('/', getUserStreaks);
 
-// POST /api/streaks/update - Update user streak (for manual updates)
+// POST /api/streaks/update - Update user streak 
 router.post('/update', updateStreak);
 
 export default router;

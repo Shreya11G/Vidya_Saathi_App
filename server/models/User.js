@@ -234,5 +234,4 @@ userSchema.index({ email: 1 });
 userSchema.index({ createdAt: -1 });
 userSchema.index({ 'streaks.currentStreak': -1 });
 
-// Export the User model
 export default mongoose.model('User', userSchema);

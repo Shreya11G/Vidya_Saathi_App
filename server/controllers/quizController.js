@@ -4,18 +4,17 @@ import { extractTextFromFile } from "../utils/fileExtractor.js";
 import pkg from "json5";
 const { parse } = pkg;
 
-// ✅ Initialize Gemini AI client
+// Initialize Gemini AI client
 const genAI = new GoogleGenerativeAI(
   process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
 );
 
-// 🗂️ In-memory storage (replace with DB later if needed)
+// In-memory storage 
 const quizSessions = new Map();
 const quizResults = new Map();
 
-/**
- * 📘 Generate Quiz Questions from Uploaded Document
- */
+// Generate Quiz Questions from Uploaded Document
+
 export const generateQuiz = async (req, res) => {
   try {
     if (!req.file) {
@@ -34,7 +33,7 @@ export const generateQuiz = async (req, res) => {
       });
     }
 
-    // ✅ Validate file type and size
+    // Validate file type and size
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (req.file.size > maxSize) {
       return res.status(400).json({
@@ -52,7 +51,7 @@ export const generateQuiz = async (req, res) => {
       });
     }
 
-    // 📄 Extract text from file
+    //  Extract text from file
     const extractedText = await extractTextFromFile(req.file);
 
     if (!extractedText || extractedText.trim().length < 100) {
@@ -63,12 +62,11 @@ export const generateQuiz = async (req, res) => {
       });
     }
 
-    // ⚙️ Use latest Gemini model (fix for 404 error)
+    // Used latest Gemini model 
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 
 
-    // You can also use gemini-1.5-pro for deeper reasoning
 const prompt = `
 You are an AI quiz generator. Based only on the following text, create exactly 10 multiple-choice questions.
 
@@ -95,14 +93,14 @@ Document Content:
 ${extractedText.slice(0, 8000)}
 `;
 
-    // 🔥 Generate quiz questions from Gemini
+    //  Generate quiz questions from Gemini
     const result = await model.generateContent(prompt);
     const response = result.response;
     const aiResponse = response.text();
 
     if (!aiResponse) throw new Error("No response generated from AI");
 
-    // 🧹 Clean & Parse JSON safely
+    //  Clean & Parse JSON safely
     let questions;
 try {
   // Clean code blocks & extra text
@@ -152,7 +150,7 @@ console.log("Raw Gemini response sample:", aiResponse.slice(0));
       explanation: q.explanation || "No explanation provided.",
     }));
 
-    // 🧠 Create quiz session
+    // Create quiz session
     const sessionId = `session-${Date.now()}-${Math.random()
       .toString(36)
       .slice(2, 9)}`;
@@ -172,9 +170,9 @@ console.log("Raw Gemini response sample:", aiResponse.slice(0));
         fileName: req.file.originalname,
         fileSize: req.file.size,
         totalQuestions: formattedQuestions.length,
-        questions: formattedQuestions, // ✅ Added this line
+        questions: formattedQuestions,
         message:
-          "✅ Quiz generated successfully! You can now select the number of questions to attempt.",
+          "Quiz generated successfully! You can now select the number of questions to attempt.",
       },
     });
   } catch (error) {
@@ -213,13 +211,8 @@ console.log("Raw Gemini response sample:", aiResponse.slice(0));
   }
 };
 
-// ✅ Keep your other functions (startQuiz, submitQuiz, getQuizResult, getUserQuizHistory)
-// same as before — they’re already correct.
 
-/**
- * Start Quiz with Selected Number of Questions
- * Returns the specified number of questions from the generated quiz
- */
+
 export const startQuiz = async (req, res) => {
   try {
     const { sessionId, numberOfQuestions } = req.body;
@@ -283,10 +276,8 @@ export const startQuiz = async (req, res) => {
   }
 };
 
-/**
- * Submit Quiz and Calculate Results
- * Validates answers and returns detailed results
- */
+ //Submit Quiz and Calculate Results
+
 export const submitQuiz = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -408,10 +399,8 @@ export const submitQuiz = async (req, res) => {
   }
 };
 
-/**
- * Get Quiz Result by ID
- * Returns detailed results for a specific quiz attempt
- */
+ //Get Quiz Result by ID
+ 
 export const getQuizResult = async (req, res) => {
   try {
     const { resultId } = req.params;
@@ -441,10 +430,8 @@ export const getQuizResult = async (req, res) => {
   }
 };
 
-/**
- * Get User Quiz History
- * Returns user's previous quiz results with statistics
- */
+//Get User Quiz History
+
 export const getUserQuizHistory = async (req, res) => {
   try {
     const userId = req.user._id.toString();

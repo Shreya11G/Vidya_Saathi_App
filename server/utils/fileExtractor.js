@@ -7,9 +7,8 @@ import officeParser from 'officeparser';
 import fs from 'fs/promises';
 import path from 'path';
 
-/**
- * Extract text from PDF files
- */
+
+// Extract text from PDF files
 const extractFromPDF = async (filePath) => {
   try {
     const dataBuffer = await fs.readFile(filePath);

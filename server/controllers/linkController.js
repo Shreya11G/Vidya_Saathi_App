@@ -1,16 +1,7 @@
 import { validationResult } from 'express-validator';
 import Link from '../models/Link.js';
 
-/**
- * Link Controller
- * Handles all link-related operations including CRUD, search, and statistics
- * All operations are scoped to the authenticated user
- */
 
-/**
- * Get All Links for User
- * Retrieves links with optional filtering and pagination
- */
 export const getLinks = async (req, res) => {
   try {
     const {
@@ -77,10 +68,9 @@ export const getLinks = async (req, res) => {
   }
 };
 
-/**
- * Get Single Link
- * Retrieves a specific link by ID
- */
+// Get Single Link
+
+ 
 export const getLink = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -118,10 +108,9 @@ export const getLink = async (req, res) => {
   }
 };
 
-/**
- * Create New Link
- * Creates a new link for the authenticated user
- */
+//Create New Link
+
+ 
 export const createLink = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -172,10 +161,10 @@ export const createLink = async (req, res) => {
   }
 };
 
-/**
- * Update Link
- * Updates an existing link with new information
- */
+
+ // Update Link
+ 
+
 export const updateLink = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -232,10 +221,9 @@ export const updateLink = async (req, res) => {
   }
 };
 
-/**
- * Record Link Click
- * Increments click count and updates last visited timestamp
- */
+// Record Link Click
+ 
+
 export const recordClick = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -281,10 +269,9 @@ export const recordClick = async (req, res) => {
   }
 };
 
-/**
- * Toggle Link Favorite Status
- * Toggles the favorite status of a link
- */
+// Toggle Link Favorite Status
+
+ 
 export const toggleFavorite = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -327,10 +314,8 @@ export const toggleFavorite = async (req, res) => {
   }
 };
 
-/**
- * Delete Link
- * Permanently deletes a link
- */
+// Delete Link
+
 export const deleteLink = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -368,10 +353,8 @@ export const deleteLink = async (req, res) => {
   }
 };
 
-/**
- * Search Links
- * Performs text search across link titles, descriptions, and tags
- */
+// Search Links
+ 
 export const searchLinks = async (req, res) => {
   try {
     const { q, category, isFavorite, studyStatus, limit = 20 } = req.query;
@@ -409,10 +392,8 @@ export const searchLinks = async (req, res) => {
   }
 };
 
-/**
- * Get Link Statistics
- * Returns comprehensive link statistics for the user
- */
+// Get Link Statistics
+ 
 export const getLinkStats = async (req, res) => {
   try {
     const stats = await Link.getUserStats(req.user._id);

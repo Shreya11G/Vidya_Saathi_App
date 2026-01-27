@@ -14,18 +14,15 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-/**
- * Task Routes
- * All routes require authentication
- * Handles CRUD operations for tasks/todos
- */
+// Task Routes
+
 
 // Apply authentication middleware to all task routes
 router.use(authenticate);
 
-/**
- * Validation Rules for Task Creation
- */
+
+// Validation Rules for Task Creation
+
 const createTaskValidation = [
   body('title')
     .trim()
@@ -59,9 +56,9 @@ const createTaskValidation = [
     .withMessage('Estimated duration must be between 1 and 1440 minutes')
 ];
 
-/**
- * Validation Rules for Task Update
- */
+
+// Validation Rules for Task Update
+
 const updateTaskValidation = [
   param('id')
     .isMongoId()
@@ -110,18 +107,18 @@ const updateTaskValidation = [
     .withMessage('Actual duration must be a positive number')
 ];
 
-/**
- * Validation Rules for Task ID Parameter
- */
+
+// Validation Rules for Task ID Parameter
+
 const taskIdValidation = [
   param('id')
     .isMongoId()
     .withMessage('Invalid task ID')
 ];
 
-/**
- * Validation Rules for Task Search
- */
+
+// Validation Rules for Task Search
+
 const searchValidation = [
   query('q')
     .optional()
@@ -149,9 +146,9 @@ const searchValidation = [
     .withMessage('Limit must be between 1 and 100')
 ];
 
-/**
- * Task CRUD Routes
- */
+
+// Task CRUD Routes
+
 
 // GET /api/tasks - Get all tasks for authenticated user
 router.get('/', getTasks);

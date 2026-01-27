@@ -15,18 +15,18 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-/**
- * Note Routes
- * All routes require authentication
- * Handles CRUD operations for notes/sticky notes
- */
+
+// Note Routes
+// All routes require authentication
+// Handles CRUD operations for notes/sticky notes
+
 
 // Apply authentication middleware to all note routes
 router.use(authenticate);
 
-/**
- * Validation Rules for Note Creation
- */
+
+// Validation Rules for Note Creation
+
 const createNoteValidation = [
   body('title')
     .trim()
@@ -53,9 +53,9 @@ const createNoteValidation = [
     .withMessage('Tags must be an array')
 ];
 
-/**
- * Validation Rules for Note Update
- */
+
+// Validation Rules for Note Update
+
 const updateNoteValidation = [
   param('id')
     .isMongoId()
@@ -103,9 +103,9 @@ const updateNoteValidation = [
     .withMessage('Height must be between 150 and 500 pixels')
 ];
 
-/**
- * Note CRUD Routes
- */
+
+// Note CRUD Routes
+
 
 // GET /api/notes - Get all notes for authenticated user
 router.get('/', getNotes);

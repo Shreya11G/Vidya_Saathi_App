@@ -4,16 +4,11 @@ import User from '../models/User.js';
 import mongoose from 'mongoose';
 
 
-/**
- * Task Controller
- * Handles all task-related operations including CRUD, search, and statistics
- * All operations are scoped to the authenticated user
- */
 
-/**
- * Get All Tasks for User
- * Retrieves tasks with optional filtering and pagination
- */
+
+// Get All Tasks for User
+ // Retrieves tasks with optional filtering and pagination
+ 
 export const getTasks = async (req, res) => {
   try {
     const {
@@ -82,10 +77,9 @@ export const getTasks = async (req, res) => {
   }
 };
 
-/**
- * Get Single Task
- * Retrieves a specific task by ID
- */
+
+ // Get Single Task
+
 export const getTask = async (req, res) => {
   try {
     // Check validation results
@@ -124,10 +118,8 @@ export const getTask = async (req, res) => {
   }
 };
 
-/**
- * Create New Task
- * Creates a new task for the authenticated user
- */
+//Create New Task
+ 
 export const createTask = async (req, res) => {
   try {
     // Check validation results
@@ -181,10 +173,8 @@ export const createTask = async (req, res) => {
   }
 };
 
-/**
- * Update Task
- * Updates an existing task with new information
- */
+//Update Task
+ 
 export const updateTask = async (req, res) => {
   try {
     // Check validation results
@@ -243,10 +233,8 @@ export const updateTask = async (req, res) => {
   }
 };
 
-/**
- * Toggle Task Completion
- * Toggles the completion status of a task and updates user streak
- */
+// Toggle Task Completion
+
 export const toggleTaskCompletion = async (req, res) => {
   try {
     // Check validation results
@@ -299,10 +287,8 @@ export const toggleTaskCompletion = async (req, res) => {
   }
 };
 
-/**
- * Delete Task
- * Permanently deletes a task
- */
+// Delete Task
+
 export const deleteTask = async (req, res) => {
   try {
     // Check validation results
@@ -341,10 +327,8 @@ export const deleteTask = async (req, res) => {
   }
 };
 
-/**
- * Get Task Statistics
- * Returns comprehensive task statistics for the user
- */
+//  Get Task Statistics
+
 export const getTaskStats = async (req, res) => {
   try {
     const stats = await Task.getUserStats(req.user._id);
@@ -422,10 +406,8 @@ export const getTaskStats = async (req, res) => {
   }
 };
 
-/**
- * Search Tasks
- * Performs text search across task titles and descriptions
- */
+// Search Tasks
+
 export const searchTasks = async (req, res) => {
   try {
     // Check validation results

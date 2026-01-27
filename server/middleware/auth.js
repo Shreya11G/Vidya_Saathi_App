@@ -1,17 +1,13 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-/**
- * Authentication Middleware
- * Verifies JWT tokens from HTTP-only cookies and attaches user to request
- * Provides different levels of authentication checking
- */
 
-/**
- * Primary authentication middleware
- * Verifies JWT token from cookies and attaches user to req.user
- * Returns 401 if token is invalid or user not found
- */
+
+
+//  Primary authentication middleware
+//  Verifies JWT token from cookies and attaches user to req.user
+//  Returns 401 if token is invalid or user not found
+ 
 export const authenticate = async (req, res, next) => {
   try {
     // Extract token from HTTP-only cookie
@@ -80,11 +76,11 @@ export const authenticate = async (req, res, next) => {
   }
 };
 
-/**
- * Optional authentication middleware
- * Similar to authenticate but doesn't return error if no token
- * Used for routes that can work with or without authentication
- */
+
+// Optional authentication middleware
+// Similar to authenticate but doesn't return error if no token
+// Used for routes that can work with or without authentication
+
 export const optionalAuth = async (req, res, next) => {
   try {
     const token = req.cookies.token;
@@ -129,11 +125,11 @@ export const optionalAuth = async (req, res, next) => {
   }
 };
 
-/**
- * Role-based authorization middleware factory
- * Creates middleware that checks if user has required role
- * Must be used after authenticate middleware
- */
+
+// Role-based authorization middleware factory
+// Creates middleware that checks if user has required role
+// Must be used after authenticate middleware
+
 export const authorize = (...roles) => {
   return (req, res, next) => {
     // Check if user is authenticated (should be set by authenticate middleware)
@@ -156,23 +152,23 @@ export const authorize = (...roles) => {
   };
 };
 
-/**
- * Admin-only authorization middleware
- * Convenience middleware for admin-only routes
- */
+
+// Admin-only authorization middleware
+// Convenience middleware for admin-only routes
+
 export const adminOnly = authorize('admin');
 
-/**
- * Student authorization middleware
- * Allows both students and admins (admins have all student permissions)
- */
+
+// Student authorization middleware
+// Allows both students and admins (admins have all student permissions)
+
 export const studentAccess = authorize('student', 'admin');
 
-/**
- * User ownership verification middleware factory
- * Verifies that the authenticated user owns the requested resource
- * Expects resource user ID to be available in req.params or req.body
- */
+
+// User ownership verification middleware factory
+// Verifies that the authenticated user owns the requested resource
+// Expects resource user ID to be available in req.params or req.body
+
 export const verifyOwnership = (userIdField = 'userId') => {
   return (req, res, next) => {
     if (!req.user) {
@@ -205,10 +201,10 @@ export const verifyOwnership = (userIdField = 'userId') => {
   };
 };
 
-/**
- * Rate limiting middleware for authentication attempts
- * Prevents brute force attacks on login/register endpoints
- */
+
+//  Rate limiting middleware for authentication attempts
+//  Prevents brute force attacks on login/register endpoints
+ 
 export const authRateLimit = (windowMs = 15 * 60 * 1000, max = 5) => {
   const attempts = new Map();
   
@@ -258,10 +254,10 @@ export const authRateLimit = (windowMs = 15 * 60 * 1000, max = 5) => {
   };
 };
 
-/**
- * Middleware to update user login streak
- * Should be used after successful authentication
- */
+
+// Middleware to update user login streak
+// Should be used after successful authentication
+
 export const updateLoginStreak = async (req, res, next) => {
   try {
     if (req.user) {

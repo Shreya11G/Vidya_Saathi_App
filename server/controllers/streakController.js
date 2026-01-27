@@ -1,15 +1,10 @@
 import User from '../models/User.js';
 import Task from '../models/Task.js';
 
-/**
- * Streak Controller
- * Handles user streak tracking, statistics, and gamification features
- */
 
-/**
- * Get User Streaks and Statistics
- * Returns comprehensive streak information and progress data
- */
+ // Get User Streaks and Statistics
+ // Returns comprehensive streak information and progress data
+
 export const getUserStreaks = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('streaks');
@@ -166,10 +161,9 @@ export const getUserStreaks = async (req, res) => {
   }
 };
 
-/**
- * Update User Streak
- * Manually updates streak information (for admin or special cases)
- */
+// Update User Streak
+ // Manually updates streak information (for admin or special cases)
+ 
 export const updateStreak = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -204,10 +198,9 @@ export const updateStreak = async (req, res) => {
   }
 };
 
-/**
- * Helper function to calculate user achievements/badges
- * Based on streak milestones and task completion
- */
+// Helper function to calculate user achievements/badges
+ // Based on streak milestones and task completion
+ 
 function calculateAchievements(streaks, totalTasks) {
   const achievements = [];
   
@@ -316,10 +309,10 @@ function calculateAchievements(streaks, totalTasks) {
   return achievements;
 }
 
-/**
- * Helper function to calculate streak health
- * Returns a score from 0-100 based on consistency
- */
+
+ // Helper function to calculate streak health
+ // Returns a score from 0-100 based on consistency
+ 
 function calculateStreakHealth(last30DaysData) {
   if (last30DaysData.length === 0) return 0;
   
@@ -349,9 +342,8 @@ function calculateStreakHealth(last30DaysData) {
   };
 }
 
-/**
- * Helper function to find the most productive day of the week
- */
+// Helper function to find the most productive day of the week
+ 
 function getMostProductiveDay(last7DaysData) {
   if (last7DaysData.length === 0) return null;
   

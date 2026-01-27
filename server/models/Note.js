@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-/**
- * Note Schema Definition
- * Defines the structure for notes/sticky notes data in MongoDB
- * Includes note content, formatting, and user association
- */
+
 const noteSchema = new mongoose.Schema({
   // Note ownership
   userId: {
@@ -121,10 +117,10 @@ const noteSchema = new mongoose.Schema({
   collection: 'notes'
 });
 
-/**
- * Pre-save Middleware
- * Update auto-save timestamp when content changes
- */
+
+// Pre-save Middleware
+
+
 noteSchema.pre('save', function(next) {
   // Update auto-save timestamp if content has changed
   if (this.isModified('content') || this.isModified('title')) {
@@ -144,61 +140,61 @@ noteSchema.pre('save', function(next) {
   next();
 });
 
-/**
- * Instance Method: Toggle Pin Status
- * Toggles the pinned status of the note
- */
+
+// Instance Method: Toggle Pin Status
+
+
 noteSchema.methods.togglePin = function() {
   this.isPinned = !this.isPinned;
 };
 
-/**
- * Instance Method: Toggle Favorite Status
- * Toggles the favorite status of the note
- */
+
+// Instance Method: Toggle Favorite Status
+
+
 noteSchema.methods.toggleFavorite = function() {
   this.isFavorite = !this.isFavorite;
 };
 
-/**
- * Instance Method: Archive Note
- * Archives the note (moves to archive section)
- */
+
+// Instance Method: Archive Note
+
+
 noteSchema.methods.archive = function() {
   this.isArchived = true;
   this.isPinned = false; // Archived notes cannot be pinned
 };
 
-/**
- * Instance Method: Unarchive Note
- * Removes note from archive
- */
+
+// Instance Method: Unarchive Note
+
+
 noteSchema.methods.unarchive = function() {
   this.isArchived = false;
 };
 
-/**
- * Instance Method: Update Position
- * Updates the position of the sticky note on screen
- */
+
+// Instance Method: Update Position
+
+
 noteSchema.methods.updatePosition = function(x, y) {
   this.position.x = Math.max(0, x);
   this.position.y = Math.max(0, y);
 };
 
-/**
- * Instance Method: Update Size
- * Updates the size of the sticky note
- */
+
+// Instance Method: Update Size
+
+
 noteSchema.methods.updateSize = function(width, height) {
   this.size.width = Math.max(150, Math.min(500, width));
   this.size.height = Math.max(150, Math.min(500, height));
 };
 
-/**
- * Instance Method: Add Tag
- * Adds a new tag to the note if it doesn't already exist
- */
+
+// Instance Method: Add Tag
+
+
 noteSchema.methods.addTag = function(tag) {
   const trimmedTag = tag.trim().toLowerCase();
   if (trimmedTag && !this.tags.includes(trimmedTag)) {
@@ -206,18 +202,17 @@ noteSchema.methods.addTag = function(tag) {
   }
 };
 
-/**
- * Instance Method: Remove Tag
- * Removes a tag from the note
- */
+
+// Instance Method: Remove Tag
+
 noteSchema.methods.removeTag = function(tag) {
   this.tags = this.tags.filter(t => t !== tag.trim().toLowerCase());
 };
 
-/**
- * Static Method: Get User Note Statistics
- * Returns note statistics for a specific user
- */
+
+// Static Method: Get User Note Statistics
+
+
 noteSchema.statics.getUserStats = async function(userId) {
   try {
     const stats = await this.aggregate([
@@ -252,10 +247,10 @@ noteSchema.statics.getUserStats = async function(userId) {
   }
 };
 
-/**
- * Static Method: Search Notes
- * Performs text search across note titles and content
- */
+
+// Static Method: Search Notes
+
+
 noteSchema.statics.searchUserNotes = async function(userId, searchTerm, options = {}) {
   try {
     const query = {

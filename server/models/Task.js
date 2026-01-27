@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
 
-/**
- * Task Schema Definition
- * Defines the structure for task/todo data in MongoDB
- * Includes task details, status tracking, and user association
- */
 const taskSchema = new mongoose.Schema({
   // Task identification and ownership
   userId: {
@@ -112,10 +107,10 @@ const taskSchema = new mongoose.Schema({
   collection: 'tasks'
 });
 
-/**
- * Pre-save Middleware
- * Automatically update task status and completion tracking
- */
+
+// Pre-save Middleware
+
+
 taskSchema.pre('save', function(next) {
   // Auto-update completion status based on completed field
   if (this.completed && this.status !== 'completed') {
@@ -144,10 +139,10 @@ taskSchema.pre('save', function(next) {
   next();
 });
 
-/**
- * Instance Method: Toggle Task Completion
- * Toggles task completion status and updates relevant fields
- */
+
+// Instance Method: Toggle Task Completion
+
+
 taskSchema.methods.toggleCompletion = function() {
   this.completed = !this.completed;
   
@@ -168,10 +163,10 @@ taskSchema.methods.toggleCompletion = function() {
   }
 };
 
-/**
- * Instance Method: Add Subtask
- * Adds a new subtask to the task
- */
+
+// Instance Method: Add Subtask
+
+
 taskSchema.methods.addSubtask = function(title) {
   this.subtasks.push({
     title: title.trim(),
@@ -179,10 +174,10 @@ taskSchema.methods.addSubtask = function(title) {
   });
 };
 
-/**
- * Instance Method: Toggle Subtask Completion
- * Toggles completion status of a specific subtask
- */
+
+// Instance Method: Toggle Subtask Completion
+
+
 taskSchema.methods.toggleSubtask = function(subtaskId) {
   const subtask = this.subtasks.id(subtaskId);
   if (subtask) {
@@ -191,10 +186,10 @@ taskSchema.methods.toggleSubtask = function(subtaskId) {
   }
 };
 
-/**
- * Static Method: Get User Statistics
- * Returns task completion statistics for a specific user
- */
+
+// Static Method: Get User Statistics
+
+
 taskSchema.statics.getUserStats = async function(userId) {
   try {
     const stats = await this.aggregate([

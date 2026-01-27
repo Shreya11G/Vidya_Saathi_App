@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-/**
- * Link Schema Definition
- * Defines the structure for important links/study resources in MongoDB
- * Includes link metadata, categorization, and user association
- */
+
 const linkSchema = new mongoose.Schema({
   // Link ownership
   userId: {
@@ -104,12 +100,12 @@ const linkSchema = new mongoose.Schema({
   
   // Additional metadata that might be fetched from the URL
   metadata: {
-    title: String, // Fetched page title
-    description: String, // Fetched meta description
-    favicon: String, // Favicon URL
-    image: String, // Preview image URL
-    siteName: String, // Site name from meta tags
-    domain: String // Extracted domain name
+    title: String, 
+    description: String, 
+    favicon: String,
+    image: String, 
+    siteName: String, 
+    domain: String 
   },
   
   // Priority for ordering
@@ -146,10 +142,10 @@ const linkSchema = new mongoose.Schema({
   collection: 'links'
 });
 
-/**
- * Pre-save Middleware
- * Process URL and extract metadata before saving
- */
+
+//  Pre-save Middleware
+//  Process URL and extract metadata before saving
+ 
 linkSchema.pre('save', function(next) {
   // Ensure URL has protocol
   if (this.url && !this.url.startsWith('http://') && !this.url.startsWith('https://')) {
@@ -176,27 +172,27 @@ linkSchema.pre('save', function(next) {
   next();
 });
 
-/**
- * Instance Method: Record Click
- * Increments click count and updates last visited timestamp
- */
+
+// Instance Method: Record Click
+// Increments click count and updates last visited timestamp
+
 linkSchema.methods.recordClick = function() {
   this.clickCount += 1;
   this.lastVisited = new Date();
 };
 
-/**
- * Instance Method: Toggle Favorite
- * Toggles the favorite status of the link
- */
+
+// Instance Method: Toggle Favorite
+
+
 linkSchema.methods.toggleFavorite = function() {
   this.isFavorite = !this.isFavorite;
 };
 
-/**
- * Instance Method: Update Study Progress
- * Updates the study progress status and related fields
- */
+
+// Instance Method: Update Study Progress
+
+
 linkSchema.methods.updateStudyProgress = function(status, notes = null, rating = null) {
   this.studyProgress.status = status;
   if (notes) this.studyProgress.notes = notes;
@@ -209,10 +205,10 @@ linkSchema.methods.updateStudyProgress = function(status, notes = null, rating =
   }
 };
 
-/**
- * Instance Method: Add Tag
- * Adds a new tag to the link if it doesn't already exist
- */
+
+// Instance Method: Add Tag
+
+
 linkSchema.methods.addTag = function(tag) {
   const trimmedTag = tag.trim().toLowerCase();
   if (trimmedTag && !this.tags.includes(trimmedTag)) {
@@ -220,19 +216,17 @@ linkSchema.methods.addTag = function(tag) {
   }
 };
 
-/**
- * Instance Method: Remove Tag
- * Removes a tag from the link
- */
+
+// Instance Method: Remove Tag
+
+
 linkSchema.methods.removeTag = function(tag) {
   this.tags = this.tags.filter(t => t !== tag.trim().toLowerCase());
 };
 
-/**
- * Static Method: Get User Link Statistics
- * Returns link statistics for a specific user
- */
-// Static Method: Get User Link Statistics (robust, with safe defaults + logging)
+
+// Static Method: Get User Link Statistics
+
 linkSchema.statics.getUserStats = async function(userId) {
   try {
     // Validate presence
@@ -240,9 +234,8 @@ linkSchema.statics.getUserStats = async function(userId) {
       throw new Error('getUserStats requires userId');
     }
 
-    // Validate/convert userId to ObjectId safely
     if (!mongoose.isValidObjectId(userId)) {
-      // If it's an object with an _id field, try that
+      
       if (userId._id && mongoose.isValidObjectId(userId._id)) {
         userId = String(userId._id);
       } else {
@@ -311,12 +304,12 @@ linkSchema.statics.getUserStats = async function(userId) {
       categoryBreakdown
     };
   } catch (error) {
-    // Very important: log the real error (message + stack) so we can debug
+    
     console.error('Error in Link.getUserStats:', error.message);
     console.error(error.stack);
 
     // Return a safe default object instead of throwing a generic error,
-    // so the endpoint can still respond and you can inspect logs.
+    // so the endpoint can still respond and we can inspect logs.
     return {
       totalLinks: 0,
       favoriteLinks: 0,
@@ -329,10 +322,10 @@ linkSchema.statics.getUserStats = async function(userId) {
   }
 };
 
-/**
- * Static Method: Search Links
- * Performs text search across link titles, descriptions, and tags
- */
+
+// Static Method: Search Links
+
+
 linkSchema.statics.searchUserLinks = async function(userId, searchTerm, options = {}) {
   try {
     const query = {
@@ -366,10 +359,8 @@ linkSchema.statics.searchUserLinks = async function(userId, searchTerm, options 
   }
 };
 
-/**
- * Static Method: Get Popular Links
- * Returns most clicked links for a user
- */
+//Static Method: Get Popular Links
+ 
 linkSchema.statics.getPopularLinks = async function(userId, limit = 10) {
   try {
     const links = await this.find({ userId: new mongoose.Types.ObjectId(userId) })
@@ -390,5 +381,5 @@ linkSchema.index({ userId: 1, 'studyProgress.status': 1 });
 linkSchema.index({ userId: 1, clickCount: -1 });
 linkSchema.index({ title: 'text', description: 'text', tags: 'text' });
 
-// Export the Link model
+
 export default mongoose.model('Link', linkSchema);

@@ -14,16 +14,15 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// ✅ Ensure upload folder exists
 const uploadDir = path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-/**
- * Configure multer for file uploads
- * Supports: PDF, Word, PowerPoint
- */
+
+// Configure multer for file uploads
+
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir); // cross-platform safe
@@ -51,12 +50,12 @@ const upload = multer({
   }
 });
 
-// ✅ Authentication middleware for all quiz routes
+// Authentication middleware for all quiz routes
 router.use(authenticate);
 
-/**
- * Validation Rules
- */
+
+// Validation Rules
+
 const startQuizValidation = [
   body('sessionId').trim().notEmpty().withMessage('Session ID is required'),
   body('numberOfQuestions')
@@ -74,9 +73,9 @@ const submitQuizValidation = [
     .withMessage('Time spent must be a non-negative integer')
 ];
 
-/**
- * Quiz Routes
- */
+
+// Quiz Routes
+
 router.post('/generate', upload.single('file'), generateQuiz);
 router.post('/start', startQuizValidation, startQuiz);
 router.post('/submit', submitQuizValidation, submitQuiz);

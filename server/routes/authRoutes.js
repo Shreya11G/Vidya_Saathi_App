@@ -14,16 +14,13 @@ import { authenticate, authRateLimit } from '../middleware/auth.js';
 
 const router = express.Router();
 
-/**
- * Authentication Routes
- * Handles user registration, login, logout, and profile management
- * All routes use appropriate validation and rate limiting
- */
 
-/**
- * Validation Rules for Registration
- * Validates user input for account creation
- */
+// Authentication Routes
+// Handles user registration, login, logout, and profile management
+// All routes use appropriate validation and rate limiting
+
+
+
 const registerValidation = [
   body('name')
     .trim()
@@ -59,10 +56,10 @@ const registerValidation = [
     .withMessage('Interests must be an array')
 ];
 
-/**
- * Validation Rules for Login
- * Validates user credentials
- */
+
+// Validation Rules for Login
+
+
 const loginValidation = [
   body('email')
     .isEmail()
@@ -74,10 +71,9 @@ const loginValidation = [
     .withMessage('Password is required')
 ];
 
-/**
- * Validation Rules for Profile Update
- * Validates profile information updates
- */
+
+// Validates profile information updates
+
 const updateProfileValidation = [
   body('name')
     .optional()
@@ -123,10 +119,10 @@ const updateProfileValidation = [
     .withMessage('Break duration must be between 1 and 30 minutes')
 ];
 
-/**
- * Validation Rules for Password Change
- * Validates password change request
- */
+
+
+// Validates password change request
+
 const changePasswordValidation = [
   body('currentPassword')
     .notEmpty()
@@ -147,19 +143,17 @@ const changePasswordValidation = [
     })
 ];
 
-/**
- * Validation Rules for Account Deletion
- * Validates password for account deletion
- */
+
+ //Validates password for account deletion
+
 const deleteAccountValidation = [
   body('password')
     .notEmpty()
     .withMessage('Password is required for account deletion')
 ];
 
-/**
- * Public Routes (No Authentication Required)
- */
+//Public Routes (No Authentication Required)
+ 
 
 // POST /api/auth/register - Register new user
 router.post('/register', authRateLimit(15 * 60 * 1000, 3), registerValidation, register);
@@ -167,12 +161,11 @@ router.post('/register', authRateLimit(15 * 60 * 1000, 3), registerValidation, r
 // POST /api/auth/login - Login user
 router.post('/login', authRateLimit(15 * 60 * 1000, 5), loginValidation, login);
 
-// POST /api/auth/logout - Logout user (can be called without auth)
+// POST /api/auth/logout - Logout user 
 router.post('/logout', logout);
 
-/**
- * Protected Routes (Authentication Required)
- */
+//Protected Routes (Authentication Required)
+ 
 
 // GET /api/auth/profile - Get current user profile
 router.get('/profile', authenticate, getProfile);
@@ -189,10 +182,7 @@ router.delete('/account', authenticate, deleteAccountValidation, deleteAccount);
 // GET /api/auth/check - Check authentication status
 router.get('/check', authenticate, checkAuth);
 
-/**
- * Health Check Route
- * Simple endpoint to check if auth service is working
- */
+
 router.get('/health', (req, res) => {
   res.status(200).json({
     success: true,

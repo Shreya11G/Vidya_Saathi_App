@@ -4,13 +4,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-/**
- * AI Controller
- * Handles AI-powered features including study tutoring and career guidance
- * Uses Google Gemini for generating responses
- */
 
-// ✅ Initialize Gemini client once
+
+// Initialize Gemini client once
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp",
@@ -20,9 +16,8 @@ const model = genAI.getGenerativeModel({
 // In-memory chat history storage (in production, use database)
 const chatHistory = new Map();
 
-/**
- * Debug: List Models
- */
+// Debug: List Models
+ 
 async function listModels() {
   try {
     const models = await genAI.listModels();
@@ -33,12 +28,11 @@ async function listModels() {
     
   }
 }
-// Uncomment if you need to check available models
+// Uncomment if need to check available models
 // listModels();
 
-/**
- * Ask AI Study Tutor
- */
+// Ask AI Study Tutor
+ 
 export const askTutor = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -63,7 +57,7 @@ export const askTutor = async (req, res) => {
     // Get user's chat history for context
     const userHistory = chatHistory.get(userId) || [];
 
-   // System prompt (refined for structured academic responses)
+   // System prompt
 const systemPrompt = `
 You are an academic AI Tutor named "VidyaSaathi AI".  
 Your goal is to provide clear, structured, and concise explanations to help students in self-study.
@@ -164,9 +158,8 @@ Please format your answer using valid Markdown syntax (for bold, lists, and code
   }
 };
 
-/**
- * Get AI Career Advice
- */
+// Get AI Career Advice
+ 
 export const getCareerAdvice = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -257,9 +250,8 @@ Student Profile:
   }
 };
 
-/**
- * Get Chat History
- */
+// Get Chat History
+ 
 export const getChatHistory = async (req, res) => {
   try {
     const userId = req.user._id.toString();
@@ -316,9 +308,8 @@ export const getChatHistory = async (req, res) => {
   }
 };
 
-/**
- * Delete Chat History
- */
+// Delete Chat History
+ 
 export const deleteChatHistory = async (req, res) => {
   try {
     const userId = req.user._id.toString();

@@ -2,19 +2,7 @@ import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import User from '../models/User.js';
 
-/**
- * Authentication Controller
- * Handles user registration, login, logout, and profile management
- * All authentication uses JWT stored in HTTP-only cookies for security
- */
 
-/**
- * Generate JWT Token and Set Cookie
- * Creates a JWT token and sets it as an HTTP-only cookie
- * @param {Object} res - Express response object
- * @param {string} userId - User ID to include in token
- * @returns {string} - Generated JWT token
- */
 const generateTokenAndSetCookie = (res, userId) => {
   // Generate JWT token with user ID
   const token = jwt.sign(
@@ -35,11 +23,10 @@ const generateTokenAndSetCookie = (res, userId) => {
   return token;
 };
 
-/**
- * Register New User
- * Creates a new user account with email and password
- * Validates input and checks for existing users
- */
+//  Register New User
+//   Creates a new user account with email and password
+//   Validates input and checks for existing users
+ 
 export const register = async (req, res) => {
   try {
     // Check validation results from express-validator middleware
@@ -109,11 +96,10 @@ export const register = async (req, res) => {
   }
 };
 
-/**
- * Login User
- * Authenticates user with email and password
- * Updates login streak and sets authentication cookie
- */
+//  Login User
+//   Authenticates user with email and password
+//   Updates login streak and sets authentication cookie
+ 
 export const login = async (req, res) => {
   try {
     // Check validation results
@@ -181,10 +167,10 @@ export const login = async (req, res) => {
   }
 };
 
-/**
- * Logout User
- * Clears authentication cookie and logs out user
- */
+
+  //Logout User
+  //Clears authentication cookie and logs out user
+
 export const logout = async (req, res) => {
   try {
     // Clear the authentication cookie
@@ -209,10 +195,9 @@ export const logout = async (req, res) => {
   }
 };
 
-/**
- * Get Current User Profile
- * Returns the authenticated user's profile information
- */
+// Get Current User Profile
+  //Returns the authenticated user's profile information
+ 
 export const getProfile = async (req, res) => {
   try {
     // req.user is set by authentication middleware
@@ -239,10 +224,10 @@ export const getProfile = async (req, res) => {
   }
 };
 
-/**
- * Update User Profile
- * Updates user profile information (excluding sensitive fields)
- */
+
+//  Update User Profile
+//  Updates user profile information (excluding sensitive fields)
+ 
 export const updateProfile = async (req, res) => {
   try {
     // Check validation results
@@ -306,10 +291,9 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-/**
- * Change Password
- * Allows user to change their password with current password verification
- */
+// Change Password
+//  Allows user to change their password with current password verification
+ 
 export const changePassword = async (req, res) => {
   try {
     // Check validation results
@@ -359,10 +343,9 @@ export const changePassword = async (req, res) => {
   }
 };
 
-/**
- * Delete User Account
- * Permanently deletes user account and all associated data
- */
+// Delete User Account
+ //Permanently deletes user account and all associated data
+ 
 export const deleteAccount = async (req, res) => {
   try {
     const { password } = req.body;
@@ -409,10 +392,10 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
-/**
- * Check Authentication Status
- * Verifies if user is authenticated without returning user data
- */
+
+ // Check Authentication Status
+ // Verifies if user is authenticated without returning user data
+ 
 export const checkAuth = async (req, res) => {
   try {
     // If middleware passed, user is authenticated
