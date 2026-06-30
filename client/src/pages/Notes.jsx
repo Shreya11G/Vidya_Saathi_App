@@ -214,7 +214,7 @@ const Notes = () => {
       {/* Notes Grid */}
       <div className="space-y-4">
         {sortedNotes.length === 0 ? (
-          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border[var(--border-color)] p-12 text-center">
+          <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-12 text-center">
             <div className="w-16 h-16  bg-yellow-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Plus className="w-8 h-8 text-yellow-500" />
             </div>
@@ -245,7 +245,7 @@ const Notes = () => {
                       {note.isPinned && <Pin className="w-4 h-4 text-gray-600 fill-current" />}
                       {note.isFavorite && <Heart className="w-4 h-4 text-red-500 fill-current" />}
                     </div>
-                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-actions">
                       <button onClick={() => handleTogglePin(note._id)} className={`p-1 rounded hover:bg-white/50 transition-colors ${note.isPinned ? 'text-gray-700' : 'text-gray-500'}`} title={note.isPinned ? 'Unpin' : 'Pin'}><Pin className="w-4 h-4" /></button>
                       <button onClick={() => handleToggleFavorite(note._id)} className={`p-1 rounded hover:bg-white/50 transition-colors ${note.isFavorite ? 'text-red-500' : 'text-gray-500'}`} title={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}><Heart className="w-4 h-4" /></button>
                       <button onClick={() => handleEditNote(note)} className="p-1 rounded hover:bg-white/50 text-gray-500 hover:text-gray-700 transition-colors" title="Edit"><Edit className="w-4 h-4" /></button>

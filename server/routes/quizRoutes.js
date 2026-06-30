@@ -59,9 +59,9 @@ router.use(authenticate);
 const startQuizValidation = [
   body('sessionId').trim().notEmpty().withMessage('Session ID is required'),
   body('numberOfQuestions')
-    .isInt({ min: 30, max: 100 })
-    .isIn([30, 60, 90, 100])
-    .withMessage('Number of questions must be 30, 60, 90, or 100')
+    .isInt({ min: 10, max: 30 })
+    .isIn([10, 20, 30])
+    .withMessage('Number of questions must be 10, 20, or 30'),
 ];
 
 const submitQuizValidation = [

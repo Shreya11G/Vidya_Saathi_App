@@ -258,17 +258,54 @@ export const authRateLimit = (windowMs = 15 * 60 * 1000, max = 5) => {
 // Middleware to update user login streak
 // Should be used after successful authentication
 
+export const otpSendRateLimit = (windowMs = 15 * 60 * 1000, max = 20) => {
+  const attempts = new Map();
+
+  return (req, res, next) => {
+    const ip = req.ip || req.connection.remoteAddress;
+    const email = (req.body?.email || '').toLowerCase().trim();
+    const key = `${ip}:${email}`;
+    const now = Date.now();
+
+    for (const [k, data] of attempts.entries()) {
+      if (now - data.firstAttempt > windowMs) {
+        attempts.delete(k);
+      }
+    }
+
+    const entry = attempts.get(key);
+
+    if (!entry) {
+      attempts.set(key, { count: 1, firstAttempt: now });
+      return next();
+    }
+
+    if (now - entry.firstAttempt > windowMs) {
+      attempts.set(key, { count: 1, firstAttempt: now });
+      return next();
+    }
+
+    if (entry.count >= max) {
+      return res.status(429).json({
+        success: false,
+        message: `Too many OTP requests. Please try again in ${Math.ceil((windowMs - (now - entry.firstAttempt)) / 60000)} minutes.`,
+      });
+    }
+
+    entry.count += 1;
+    next();
+  };
+};
+
 export const updateLoginStreak = async (req, res, next) => {
   try {
     if (req.user) {
-      // Update login streak
       req.user.updateLoginStreak();
       await req.user.save({ validateBeforeSave: false });
     }
     next();
   } catch (error) {
     console.error('Error updating login streak:', error);
-    // Don't fail the request if streak update fails
     next();
   }
 };

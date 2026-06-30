@@ -77,6 +77,9 @@ const setLightTheme = (root) => {
   root.style.setProperty("--text-primary", "#1F2937");
   root.style.setProperty("--text-secondary", "#6B7280");
   root.style.setProperty("--border-color", "#E5E7EB");
+  root.style.setProperty("--toast-bg", "#FFFFFF");
+  root.style.setProperty("--toast-color", "#1F2937");
+  root.style.setProperty("--toast-border", "#E5E7EB");
 };
 
 const setDarkTheme = (root) => {
@@ -88,6 +91,9 @@ const setDarkTheme = (root) => {
   root.style.setProperty("--text-primary", "#F9FAFB");
   root.style.setProperty("--text-secondary", "#D1D5DB");
   root.style.setProperty("--border-color", "#374151");
+  root.style.setProperty("--toast-bg", "#1F2937");
+  root.style.setProperty("--toast-color", "#F9FAFB");
+  root.style.setProperty("--toast-border", "#374151");
 };
 
 const setPinkBlueTheme = (root) => {
@@ -99,4 +105,7 @@ const setPinkBlueTheme = (root) => {
   root.style.setProperty("--text-primary", "#1F2937");
   root.style.setProperty("--text-secondary", "#6B7280");
   root.style.setProperty("--border-color", "#F9A8D4");
+  root.style.setProperty("--toast-bg", "#FCE7F3");
+  root.style.setProperty("--toast-color", "#1F2937");
+  root.style.setProperty("--toast-border", "#F9A8D4");
 };

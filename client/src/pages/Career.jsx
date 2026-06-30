@@ -285,37 +285,37 @@ const Career = () => {
   <div className="space-y-6">
 
     {/* Header */}
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+        <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
           Career Counselor
         </h1>
-        <p className="text-[var(--text-secondary)]">
+        <p className="text-sm text-[var(--text-secondary)]">
           Get personalized AI-powered career guidance
         </p>
       </div>
 
-      <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
+      <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1 self-start sm:self-auto">
         <button
           onClick={() => setActiveView('profile')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             activeView === 'profile'
               ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
-          <User className="w-4 h-4 inline mr-2" /> Profile
+          <User className="w-4 h-4 inline mr-1.5" /> Profile
         </button>
 
         <button
           onClick={() => setActiveView('chat')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             activeView === 'chat'
               ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
-          <Bot className="w-4 h-4 inline mr-2" /> Consultation
+          <Bot className="w-4 h-4 inline mr-1.5" /> Consultation
         </button>
       </div>
     </div>

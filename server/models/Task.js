@@ -101,6 +101,18 @@ const taskSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 100
+  },
+
+  // Email reminder tracking (prevents duplicate deadline emails)
+  emailReminders: {
+    dueTodaySentAt: {
+      type: Date,
+      default: null
+    },
+    dueTomorrowSentAt: {
+      type: Date,
+      default: null
+    }
   }
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt

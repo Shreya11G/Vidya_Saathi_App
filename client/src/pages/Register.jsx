@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { Eye, EyeOff, Bot, Mail, Lock, User, GraduationCap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import OtpVerification from '../components/OtpVerification';
 
 /**
  * Register Page Component (JSX Version)
@@ -11,12 +12,13 @@ import LoadingSpinner from '../components/LoadingSpinner';
  */
 
 const Register = () => {
-  const { register, user, loading } = useAuth();
+  const { register, user, loading, otpEnabled } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    otp: '',
     academicLevel: 'undergraduate',
     subjects: [],
     interests: []
@@ -116,6 +118,10 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    if (otpEnabled && (!formData.otp || formData.otp.length !== 6)) {
+      newErrors.otp = 'Please enter the 6-digit OTP sent to your email';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -133,6 +139,7 @@ const Register = () => {
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
+        otp: formData.otp,
         academicLevel: formData.academicLevel,
         subjects: formData.subjects,
         interests: formData.interests
@@ -321,6 +328,24 @@ const Register = () => {
                 {errors.confirmPassword && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>}
               </div>
             </div>
+
+            {otpEnabled && (
+              <>
+                <OtpVerification
+                  email={formData.email}
+                  purpose="register"
+                  otp={formData.otp}
+                  onOtpChange={(val) => {
+                    setFormData((prev) => ({ ...prev, otp: val }));
+                    if (errors.otp) setErrors((prev) => ({ ...prev, otp: '' }));
+                  }}
+                  disabled={isSubmitting}
+                />
+                {errors.otp && (
+                  <p className="text-sm text-red-600 dark:text-red-400 -mt-4">{errors.otp}</p>
+                )}
+              </>
+            )}
 
             {/* Subjects Selection */}
             <div>

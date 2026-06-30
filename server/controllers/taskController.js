@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import Task from '../models/Task.js';
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import { checkAndSendStreakMilestone } from '../services/notificationService.js';
 
 
 
@@ -269,6 +270,7 @@ export const toggleTaskCompletion = async (req, res) => {
       if (user) {
         user.updateTaskCompletion();
         await user.save({ validateBeforeSave: false });
+        checkAndSendStreakMilestone(user).catch(() => {});
       }
     }
     

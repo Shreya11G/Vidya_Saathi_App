@@ -1,11 +1,17 @@
 // src/api/api.js
 import axios from 'axios';
 
-// Create an Axios instance
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// Shared instance for explicit imports
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  withCredentials: true, // send cookies with requests if needed
+  baseURL,
+  withCredentials: true,
 });
+
+// Keep legacy `import axios from 'axios'` calls working across the app
+axios.defaults.baseURL = baseURL;
+axios.defaults.withCredentials = true;
 
 // Request interceptor (optional, e.g., for adding auth headers)
 api.interceptors.request.use(

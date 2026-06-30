@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   User,
   Mail,
@@ -17,12 +17,14 @@ import {
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import axios from "axios";
+import api from "../api/api";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner";
+import OtpVerification from "../components/OtpVerification";
+import UserAvatar from "../components/UserAvatar";
 
 const Profile = () => {
-  const { user, updateProfile, logout } = useAuth();
+  const { user, updateProfile, logout, otpEnabled, refreshUser } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const [activeTab, setActiveTab] = useState("personal");
@@ -41,6 +43,13 @@ const Profile = () => {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [otpResetData, setOtpResetData] = useState({
+    otp: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [resettingViaOtp, setResettingViaOtp] = useState(false);
 
   const [preferencesData, setPreferencesData] = useState({
     theme: "light",
@@ -63,6 +72,8 @@ const Profile = () => {
     new: false,
     confirm: false,
   });
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoInputRef = useRef(null);
 
   const academicLevels = [
     { value: "high_school", label: "High School" },
@@ -135,9 +146,12 @@ const Profile = () => {
           breakDuration: user.preferences?.pomodoroSettings?.breakDuration || 5,
         },
         notifications: {
-          emailNotifications: true,
-          taskReminders: true,
-          streakReminders: true,
+          emailNotifications:
+            user.preferences?.notifications?.emailNotifications ?? true,
+          taskReminders:
+            user.preferences?.notifications?.taskReminders ?? true,
+          streakReminders:
+            user.preferences?.notifications?.streakReminders ?? true,
         },
       });
 
@@ -218,6 +232,7 @@ const Profile = () => {
         preferences: {
           theme: preferencesData.theme,
           pomodoroSettings: preferencesData.pomodoroSettings,
+          notifications: preferencesData.notifications,
         },
       };
       await updateProfile(updateData);
@@ -251,7 +266,7 @@ const Profile = () => {
 
     try {
       setChangingPassword(true);
-      await axios.put("/auth/change-password", {
+      await api.put("/auth/change-password", {
         currentPassword: securityData.currentPassword,
         newPassword: securityData.newPassword,
         confirmPassword: securityData.confirmPassword,
@@ -264,9 +279,45 @@ const Profile = () => {
       toast.success("Password changed successfully");
     } catch (error) {
       console.error("Failed to change password:", error);
-      toast.error("Failed to change password");
+      toast.error(error.response?.data?.message || "Failed to change password");
     } finally {
       setChangingPassword(false);
+    }
+  };
+
+  const handleOtpPasswordReset = async (e) => {
+    e.preventDefault();
+
+    if (otpEnabled && (!otpResetData.otp || otpResetData.otp.length !== 6)) {
+      toast.error("Please enter the 6-digit OTP");
+      return;
+    }
+    if (!otpResetData.newPassword || otpResetData.newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(otpResetData.newPassword)) {
+      toast.error("Password must include uppercase, lowercase, and a number");
+      return;
+    }
+    if (otpResetData.newPassword !== otpResetData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    try {
+      setResettingViaOtp(true);
+      await api.post("/auth/reset-password-authenticated", {
+        otp: otpEnabled ? otpResetData.otp : undefined,
+        newPassword: otpResetData.newPassword,
+        confirmPassword: otpResetData.confirmPassword,
+      });
+      setOtpResetData({ otp: "", newPassword: "", confirmPassword: "" });
+      toast.success("Password reset successfully via email OTP");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reset password");
+    } finally {
+      setResettingViaOtp(false);
     }
   };
 
@@ -278,7 +329,7 @@ const Profile = () => {
     )
       return;
     try {
-      await axios.delete("/auth/account", { data: { password } });
+      await api.delete("/auth/account", { data: { password } });
       toast.success("Account deleted successfully");
       await logout();
     } catch (error) {
@@ -291,14 +342,55 @@ const Profile = () => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const getUserInitials = () => {
-    if (!user?.name) return "U";
-    return user.name
-      .split(" ")
-      .map((word) => word.charAt(0))
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Photo must be smaller than 5MB');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      const response = await api.post('/auth/profile-photo', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      if (response.data.success) {
+        await refreshUser();
+        toast.success('Profile photo updated');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to upload photo');
+    } finally {
+      setUploadingPhoto(false);
+      if (photoInputRef.current) photoInputRef.current.value = '';
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!user?.profilePhoto) return;
+    if (!window.confirm('Remove your profile photo?')) return;
+
+    setUploadingPhoto(true);
+    try {
+      const response = await api.delete('/auth/profile-photo');
+      if (response.data.success) {
+        await refreshUser();
+        toast.success('Profile photo removed');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to remove photo');
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const tabs = [
@@ -319,39 +411,75 @@ const Profile = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
             Profile Settings
           </h1>
-          <p className="text-[var(--text-secondary)]">
+          <p className="text-sm text-[var(--text-secondary)]">
             Manage your account information and preferences
           </p>
         </div>
 
         {/* Profile Avatar */}
-        <div className="relative">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-            {getUserInitials()}
-          </div>
-          <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-600 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-colors">
-            <Camera className="w-3 h-3" />
+        <div className="relative self-start sm:self-auto">
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="sr-only"
+            onChange={handlePhotoUpload}
+            disabled={uploadingPhoto}
+          />
+          <UserAvatar user={user} size="md" />
+          <button
+            type="button"
+            onClick={() => photoInputRef.current?.click()}
+            disabled={uploadingPhoto}
+            className="absolute -bottom-1 -right-1 w-7 h-7 bg-[var(--primary-color)] hover:opacity-90 text-white rounded-full flex items-center justify-center transition-colors disabled:opacity-50"
+            title="Change profile photo"
+          >
+            {uploadingPhoto ? (
+              <LoadingSpinner size="small" color="white" />
+            ) : (
+              <Camera className="w-3.5 h-3.5" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Profile Overview Card */}
       <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
-        <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            {getUserInitials()}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="relative self-start">
+            <UserAvatar user={user} size="lg" />
           </div>
           <div className="flex-1">
             <h2 className="text-xl font-bold text-[var(--text-primary)]">
               {user?.name}
             </h2>
             <p className="text-[var(--text-secondary)]">{user?.email}</p>
-            <div className="flex items-center space-x-4 mt-2 text-sm">
+            <div className="flex flex-wrap gap-2 mt-3">
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="text-sm px-3 py-1.5 rounded-lg border border-[var(--border-color)] text-[var(--text-primary)] hover:bg-[var(--bg-primary)] disabled:opacity-50"
+              >
+                Change photo
+              </button>
+              {user?.profilePhoto && (
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  disabled={uploadingPhoto}
+                  className="text-sm px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-500/10 disabled:opacity-50"
+                >
+                  Remove photo
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm">
               <span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-900/20 text-blue-600">
                 <GraduationCap className="w-3 h-3 mr-1" />
                 {academicLevels.find(
@@ -372,18 +500,18 @@ const Profile = () => {
       {/* Tab Navigation */}
       <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] overflow-hidden">
         <div className="border-b border-[var(--border-color)]">
-          <nav className="flex space-x-8 px-6">
+          <nav className="flex overflow-x-auto scrollbar-hide gap-1 sm:gap-0 sm:space-x-6 px-4 sm:px-6">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm transition-colors ${
+                className={`flex items-center gap-2 py-3 sm:py-4 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 px-2 sm:px-0 ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] "
+                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="w-4 h-4 flex-shrink-0" />
                 <span>{tab.label}</span>
               </button>
             ))}
@@ -622,6 +750,84 @@ const Profile = () => {
                 </button>
               </form>
 
+              {otpEnabled && (
+              <div className="pt-6 border-t border-[var(--border-color)]">
+                <form onSubmit={handleOtpPasswordReset} className="space-y-4">
+                  <h4 className="font-medium text-[var(--text-primary)]">
+                    Reset Password via Email OTP
+                  </h4>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    Forgot your current password? We&apos;ll send a verification code to{" "}
+                    <strong>{user?.email}</strong>
+                  </p>
+
+                  <OtpVerification
+                    email={user?.email}
+                    purpose="reset_password"
+                    otp={otpResetData.otp}
+                    onOtpChange={(val) =>
+                      setOtpResetData((prev) => ({ ...prev, otp: val }))
+                    }
+                    disabled={resettingViaOtp}
+                    useAuthenticatedEndpoint
+                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={otpResetData.newPassword}
+                      onChange={(e) =>
+                        setOtpResetData((prev) => ({
+                          ...prev,
+                          newPassword: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-3 border border-[var(--border-color)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)]"
+                      placeholder="Enter new password"
+                      disabled={resettingViaOtp}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={otpResetData.confirmPassword}
+                      onChange={(e) =>
+                        setOtpResetData((prev) => ({
+                          ...prev,
+                          confirmPassword: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-3 border border-[var(--border-color)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)]"
+                      placeholder="Confirm new password"
+                      disabled={resettingViaOtp}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={resettingViaOtp}
+                    className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    {resettingViaOtp ? (
+                      <LoadingSpinner size="small" color="white" />
+                    ) : (
+                      <Lock className="w-4 h-4" />
+                    )}
+                    <span>
+                      {resettingViaOtp ? "Resetting..." : "Reset via OTP"}
+                    </span>
+                  </button>
+                </form>
+              </div>
+              )}
+
               {/* Danger Zone */}
               <div className="pt-6 border-t border-gray-700">
                 <h4 className="font-medium text-red-600 mb-4">
@@ -755,6 +961,9 @@ const Profile = () => {
                   <Bell className="w-4 h-4 mr-2" />
                   Notification Preferences
                 </h4>
+                <p className="text-xs text-[var(--text-secondary)] mb-3">
+                  Emails are sent on schedule when SMTP is configured. Without SMTP, check the server terminal in dev mode.
+                </p>
                 <div className="space-y-3">
                   <label className="flex items-center">
                     <input

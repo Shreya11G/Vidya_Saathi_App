@@ -288,7 +288,7 @@ const Tasks = () => {
           filteredTasks.map((task) => (
             <div
               key={task._id}
-              className={`bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6 transition-all duration-200 ${task.completed ? 'opacity-75' : 'hover:shadow-md'}`}
+              className={`bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-4 sm:p-6 transition-all duration-200 ${task.completed ? 'opacity-75' : 'hover:shadow-md'}`}
             >
               <div className="flex items-start space-x-4">
                 <button onClick={() => handleToggleCompletion(task._id)} className="mt-1 flex-shrink-0">
@@ -300,9 +300,9 @@ const Tasks = () => {
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className={`text-lg font-medium ${task.completed ? 'text-[var(--text-primary)] line-through' : 'text-[var(--text-primary)'}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className={`text-base sm:text-lg font-medium ${task.completed ? 'text-[var(--text-primary)] line-through' : 'text-[var(--text-primary)]'}`}>
                         {task.title}
                       </h3>
                       {task.description && (
@@ -312,7 +312,7 @@ const Tasks = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center space-x-2 ml-4">
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       <button onClick={() => handleEditTask(task)} className="p-1 text-gray-400 hover:text-blue-500 transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
@@ -322,7 +322,7 @@ const Tasks = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4 mt-3">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-3">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(task.category)}`}>
                       {task.category}
                     </span>

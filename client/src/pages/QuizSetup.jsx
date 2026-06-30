@@ -1,18 +1,25 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FileText, Clock, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-// import axios from 'axios';
-import api from '../api/axios';
+import api from '../api/api';
 
+const ALL_QUESTION_OPTIONS = [10, 20, 30];
 
 const QuizSetup = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { sessionId, fileName, fileSize, totalQuestions } = location.state || {};
 
-  const [selectedCount, setSelectedCount] = useState(30);
+  const questionOptions = useMemo(() => {
+    const max = totalQuestions || 30;
+    return ALL_QUESTION_OPTIONS.filter((count) => count <= max);
+  }, [totalQuestions]);
+
+  const [selectedCount, setSelectedCount] = useState(
+    () => questionOptions[questionOptions.length - 1] || 10
+  );
   const [isStarting, setIsStarting] = useState(false);
 
   if (!sessionId) {
@@ -20,31 +27,22 @@ const QuizSetup = () => {
     return null;
   }
 
-  const questionOptions = [30, 60, 90, 100];
-
   const formatFileSize = (bytes) => {
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-const timePerQuestion = 60; // seconds
-const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
-
+  const timePerQuestion = 60;
+  const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
 
   const handleStartQuiz = async () => {
     setIsStarting(true);
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/quiz/start',
-        {
-          sessionId,
-          numberOfQuestions: selectedCount,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await api.post('/quiz/start', {
+        sessionId,
+        numberOfQuestions: selectedCount,
+      });
 
       if (response.data.success) {
         toast.success('Quiz started! Good luck!');
@@ -58,8 +56,6 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
             timePerQuestion: response.data.data.timePerQuestion,
           },
         });
-        if(selectedCount > totalQuestions) setSelectedCount(totalQuestions);
-
       }
     } catch (error) {
       console.error('Start quiz error:', error);
@@ -81,7 +77,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
         <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
           Quiz Setup
         </h1>
-        <p className="text-[var(--text-seondary)]">
+        <p className="text-[var(--text-secondary)]">
           Configure your quiz settings before you begin
         </p>
       </motion.div>
@@ -119,7 +115,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
             How many questions would you like to attempt?
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             {questionOptions.map((count) => (
               <button
                 key={count}
@@ -142,9 +138,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
                   <div className="text-3xl font-bold text-[var(--text-secondary)] mb-1">
                     {count}
                   </div>
-                  <div className="text-sm text-[var(--text-primary)]">
-                    questions
-                  </div>
+                  <div className="text-sm text-[var(--text-primary)]">questions</div>
                 </div>
               </button>
             ))}
@@ -157,9 +151,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
                   <Clock className="w-5 h-5 text-orange-400" />
                 </div>
                 <div>
-                  <div className="text-sm text-[var(--text-primary)]">
-                    Estimated Time
-                  </div>
+                  <div className="text-sm text-[var(--text-primary)]">Estimated Time</div>
                   <div className="text-lg font-semibold text-[var(--text-secondary)]">
                     {estimatedTime} minutes
                   </div>
@@ -173,9 +165,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
                   <Clock className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <div className="text-sm text-[var(--text-secondary)]">
-                    Time Per Question
-                  </div>
+                  <div className="text-sm text-[var(--text-secondary)]">Time Per Question</div>
                   <div className="text-lg font-semibold text-[var(--text-secondary)]">
                     60 seconds
                   </div>
@@ -185,9 +175,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
           </div>
 
           <div className="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] mb-8">
-            <h4 className="font-semibold text-[var(--text-primary)] mb-2">
-              Quiz Rules:
-            </h4>
+            <h4 className="font-semibold text-[var(--text-primary)] mb-2">Quiz Rules:</h4>
             <ul className="space-y-1 text-sm text-[var(--text-primary)]">
               <li className="flex items-start gap-2">
                 <span className="text-blue-400">•</span>
@@ -195,7 +183,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-400">•</span>
-                <span>Timer automatically moves to next question when time expires</span>
+                <span>Timer automatically moves to the next question when time expires</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-400">•</span>
@@ -203,11 +191,7 @@ const estimatedTime = Math.ceil((selectedCount * timePerQuestion) / 60);
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-400">•</span>
-                <span>Your progress is automatically saved</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-400">•</span>
-                <span>Submit the quiz when you're done to see your results</span>
+                <span>Submit the quiz when you&apos;re done to see your results</span>
               </li>
             </ul>
           </div>

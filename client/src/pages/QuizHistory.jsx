@@ -12,13 +12,14 @@ import {
   Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import api from '../api/api';
 
 const QuizHistory = () => {
   const navigate = useNavigate();
   const [history, setHistory] = useState([]);
   const [statistics, setStatistics] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingResultId, setLoadingResultId] = useState(null);
 
   useEffect(() => {
     fetchQuizHistory();
@@ -27,9 +28,7 @@ const QuizHistory = () => {
   const fetchQuizHistory = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/quiz/history', {
-        withCredentials: true,
-      });
+      const response = await api.get('/quiz/history');
 
       if (response.data.success) {
         setHistory(response.data.data.results);
@@ -42,6 +41,32 @@ const QuizHistory = () => {
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleViewDetails = async (resultId) => {
+    setLoadingResultId(resultId);
+    try {
+      const response = await api.get(`/quiz/result/${resultId}`);
+      if (response.data.success) {
+        const data = response.data.data;
+        navigate('/quiz/result', {
+          state: {
+            resultId: data.id,
+            fileName: data.fileName,
+            totalQuestions: data.totalQuestions,
+            correctAnswers: data.correctAnswers,
+            wrongAnswers: data.wrongAnswers,
+            percentage: data.percentage,
+            timeSpent: data.timeSpent,
+            detailedAnswers: data.detailedAnswers,
+          },
+        });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to load quiz result');
+    } finally {
+      setLoadingResultId(null);
     }
   };
 
@@ -70,12 +95,9 @@ const QuizHistory = () => {
   };
 
   const getScoreBgColor = (percentage) => {
-    if (percentage >= 90)
-      return 'bg-green-900/20 border-green-800';
-    if (percentage >= 75)
-      return 'bg-blue-900/20 border-blue-800';
-    if (percentage >= 60)
-      return 'bg-orange-900/20 border-orange-800';
+    if (percentage >= 90) return 'bg-green-900/20 border-green-800';
+    if (percentage >= 75) return 'bg-blue-900/20 border-blue-800';
+    if (percentage >= 60) return 'bg-orange-900/20 border-orange-800';
     return 'bg-red-900/20 border-red-800';
   };
 
@@ -129,9 +151,7 @@ const QuizHistory = () => {
                 <FileText className="w-6 h-6 text-blue-400" />
               </div>
               <div>
-                <div className="text-sm text-[var(--text-primary)]">
-                  Total Quizzes
-                </div>
+                <div className="text-sm text-[var(--text-primary)]">Total Quizzes</div>
                 <div className="text-2xl font-bold text-[var(--text-secondary)]">
                   {statistics.totalQuizzes}
                 </div>
@@ -150,9 +170,7 @@ const QuizHistory = () => {
                 <Target className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <div className="text-sm text-[var(--text-primary)]">
-                  Average Score
-                </div>
+                <div className="text-sm text-[var(--text-primary)]">Average Score</div>
                 <div className="text-2xl font-bold text-[var(--text-secondary)]">
                   {statistics.averageScore}%
                 </div>
@@ -171,9 +189,7 @@ const QuizHistory = () => {
                 <TrendingUp className="w-6 h-6 text-orange-400" />
               </div>
               <div>
-                <div className="text-sm text-[var(--text-primary)]">
-                  Best Score
-                </div>
+                <div className="text-sm text-[var(--text-primary)]">Best Score</div>
                 <div className="text-2xl font-bold text-[var(--text-primary)]">
                   {statistics.bestScore}%
                 </div>
@@ -277,9 +293,7 @@ const QuizHistory = () => {
                         )}`}
                       >
                         <span
-                          className={`text-sm font-bold ${getScoreColor(
-                            item.percentage
-                          )}`}
+                          className={`text-sm font-bold ${getScoreColor(item.percentage)}`}
                         >
                           {item.percentage}%
                         </span>
@@ -293,12 +307,15 @@ const QuizHistory = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() => {
-                          toast.error('Detailed view requires result ID from submission');
-                        }}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 hover:bg-blue-900/20 rounded-lg transition-colors"
+                        onClick={() => handleViewDetails(item.id)}
+                        disabled={loadingResultId === item.id}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 hover:bg-blue-900/20 rounded-lg transition-colors disabled:opacity-50"
                       >
-                        <Eye className="w-4 h-4" />
+                        {loadingResultId === item.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                         View Details
                       </button>
                     </td>

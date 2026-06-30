@@ -90,13 +90,13 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
     {/* Welcome Section */}
-    <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
-      <div className="flex items-center justify-between">
+    <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
-            Welcome back, {user?.name}! 👋
+          <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mb-2">
+            Welcome back, {user?.name}!
           </h2>
-          <p className="text-[var(--text-secondary)]">
+          <p className="text-sm sm:text-base text-[var(--text-secondary)]">
             Ready to continue your learning journey? Here's your progress at a glance.
           </p>
         </div>
@@ -149,19 +149,19 @@ const Dashboard = () => {
       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
         Quick Actions
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {quickActions.map((action, index) => (
           <Link
             key={index}
             to={action.path}
-            className={`${action.color} ${action.hoverColor} text-white rounded-xl p-4 transition-all duration-200 transform hover:scale-105 hover:shadow-lg`}
+            className={`${action.color} ${action.hoverColor} text-white rounded-xl p-3 sm:p-4 transition-all duration-200 hover:shadow-lg active:scale-95`}
           >
-            <div className="flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                <action.icon className="w-5 h-5" />
+            <div className="flex flex-col items-center text-center gap-1.5 sm:gap-2">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <action.icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <p className="font-medium text-sm">{action.title}</p>
-              <p className="text-xs opacity-80">{action.description}</p>
+              <p className="font-medium text-xs sm:text-sm leading-tight">{action.title}</p>
+              <p className="text-xs opacity-80 hidden sm:block">{action.description}</p>
             </div>
           </Link>
         ))}
@@ -274,23 +274,23 @@ const Dashboard = () => {
       </div>
 
       {/* Study Time Recommendation */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-        <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h3 className="text-xl font-bold mb-2">Perfect time for a study session! 📚</h3>
-            <p className="text-blue-100 mb-4">
+            <h3 className="text-lg sm:text-xl font-bold mb-2">Perfect time for a study session!</h3>
+            <p className="text-blue-100 text-sm sm:text-base mb-4">
               Based on your activity, now would be a great time to start a focused study session.
             </p>
             <Link
               to="/pomodoro"
-              className="inline-flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors font-medium"
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors font-medium text-sm sm:text-base"
             >
               <Timer className="w-4 h-4" />
               <span>Start 25-minute session</span>
             </Link>
           </div>
-          <div className="hidden md:block">
-            <Clock className="w-16 h-16 text-white/20" />
+          <div className="hidden sm:block flex-shrink-0">
+            <Clock className="w-12 h-12 sm:w-16 sm:h-16 text-white/20" />
           </div>
         </div>
       </div>

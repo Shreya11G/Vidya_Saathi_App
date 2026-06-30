@@ -10,9 +10,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-import api from '../api/axios';
-
+import api from '../api/api';
 
 const QuizTake = () => {
   const location = useLocation();
@@ -129,17 +127,11 @@ const QuizTake = () => {
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/quiz/submit',
-        {
-          sessionId,
-          answers: allAnswers,
-          timeSpent,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await api.post('/quiz/submit', {
+        sessionId,
+        answers: allAnswers,
+        timeSpent,
+      });
 
       if (response.data.success) {
         toast.success('Quiz submitted successfully!');

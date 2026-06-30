@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Tasks from './pages/Tasks';
 import Notes from './pages/Notes';
@@ -19,13 +20,14 @@ import Streaks from './pages/Streaks';
 import Links from './pages/Links';
 import MemoryGame from './pages/MemoryGame';
 import ParagraphWriter from './pages/ParagraphWriter';
-import QuizTime from './pages/QuizTime';
 import Profile from './pages/Profile';
 import QuizUpload from './pages/QuizUpload';
 import QuizSetup from './pages/QuizSetup';
 import QuizTake from './pages/QuizTake';
 import QuizResult from './pages/QuizResult';
 import QuizHistory from './pages/QuizHistory';
+import Documents from './pages/Documents';
+import SharedDocument from './pages/SharedDocument';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/documents/shared/:shareId" element={<SharedDocument />} />
               
               {/* Protected Routes with Layout */}
               <Route
@@ -134,13 +138,7 @@ function App() {
                 </ProtectedRoute>
               } />
               
-              <Route path="/quiz-time" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <QuizTime />
-                  </Layout>
-                </ProtectedRoute>
-              } />
+              <Route path="/quiz-time" element={<Navigate to="/quiz/upload" replace />} />
 
 
               
@@ -191,11 +189,19 @@ function App() {
                   </Layout>
                 </ProtectedRoute>
               } />
+
+              <Route path="/documents" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Documents />
+                  </Layout>
+                </ProtectedRoute>
+              } />
             </Routes>
 
             {/* Global Toast Notifications */}
             <Toaster
-              position="top-right"
+              position="top-center"
               toastOptions={{
                 duration: 4000,
                 style: {

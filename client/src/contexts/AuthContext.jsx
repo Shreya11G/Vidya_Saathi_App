@@ -1,14 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import toast from 'react-hot-toast';
 
 //  Authentication Context
 //  Manages user authentication state and provides auth-related functions
 //  Uses HTTP-only cookies for secure token storage
-
-// Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:5000/api';
-axios.defaults.withCredentials = true; // Include cookies in requests
 
 const AuthContext = createContext(undefined);
 
@@ -23,20 +19,23 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [otpEnabled, setOtpEnabled] = useState(false);
 
-  /**
-   * Check if user is authenticated on app load
-   * Attempts to get user profile using existing HTTP-only cookie
-   */
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('/auth/profile');
-        if (response.data.success) {
-          setUser(response.data.user);
+        const [sessionRes, configRes] = await Promise.all([
+          api.get('/auth/session'),
+          api.get('/auth/config'),
+        ]);
+        if (sessionRes.data.authenticated && sessionRes.data.user) {
+          setUser(sessionRes.data.user);
         }
-      } catch (error) {
-        console.log('User not authenticated');
+        if (configRes.data.success) {
+          setOtpEnabled(configRes.data.otpEnabled);
+        }
+      } catch {
+        // Server unreachable — treat as logged out
       } finally {
         setLoading(false);
       }
@@ -47,9 +46,11 @@ export const AuthProvider = ({ children }) => {
 
   //  Login function
   
-  const login = async (email, password) => {
+  const login = async (email, password, otp) => {
     try {
-      const response = await axios.post('/auth/login', { email, password });
+      const payload = { email, password };
+      if (otpEnabled && otp) payload.otp = otp;
+      const response = await api.post('/auth/login', payload);
       if (response.data.success) {
         setUser(response.data.user);
         toast.success('Login successful! Welcome back.');
@@ -67,7 +68,9 @@ export const AuthProvider = ({ children }) => {
    
   const register = async (userData) => {
     try {
-      const response = await axios.post('/auth/register', userData);
+      const payload = { ...userData };
+      if (!otpEnabled) delete payload.otp;
+      const response = await api.post('/auth/register', payload);
       if (response.data.success) {
         setUser(response.data.user);
         toast.success('Registration successful! Welcome to VidyaSathi.');
@@ -85,7 +88,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('/auth/logout');
+      await api.post('/auth/logout');
       setUser(null);
       toast.success('Logged out successfully.');
     } catch (error) {
@@ -99,7 +102,7 @@ export const AuthProvider = ({ children }) => {
    
   const updateProfile = async (profileData) => {
     try {
-      const response = await axios.put('/auth/profile', profileData);
+      const response = await api.put('/auth/profile', profileData);
       if (response.data.success) {
         setUser(response.data.user);
         toast.success('Profile updated successfully.');
@@ -117,8 +120,8 @@ export const AuthProvider = ({ children }) => {
    
   const refreshUser = async () => {
     try {
-      const response = await axios.get('/auth/profile');
-      if (response.data.success) {
+      const response = await api.get('/auth/profile');
+      if (response.data.user) {
         setUser(response.data.user);
       }
     } catch (error) {
@@ -129,6 +132,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    otpEnabled,
     login,
     register,
     logout,

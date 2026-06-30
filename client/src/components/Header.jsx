@@ -2,14 +2,9 @@ import React from 'react';
 import { Menu, Sun, Moon, Palette } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-
-
-const Header = ({ title, onMenuClick }) => {
+const Header = ({ title, onMenuClick, sidebarOpen }) => {
   const { theme, toggleTheme } = useTheme();
 
-  
-   //Get theme icon based on current theme
-  
   const getThemeIcon = () => {
     switch (theme) {
       case 'light':
@@ -23,8 +18,6 @@ const Header = ({ title, onMenuClick }) => {
     }
   };
 
-  // Get theme label for tooltip/accessibility
-  
   const getThemeLabel = () => {
     switch (theme) {
       case 'light':
@@ -38,39 +31,41 @@ const Header = ({ title, onMenuClick }) => {
     }
   };
 
-  return (
-    <header className="bg-[var(--bg-secondary)] border border-[var(--border-color)] px-4 lg:px-6 py-4">
-      <div className="flex items-center justify-between">
-        {/* Left Section */}
-        <div className="flex items-center space-x-4">
-          {/* Mobile Menu Button */}
-          <button
-            onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-md hover:bg-[var(--bg-primary)] transition-colors"
-            aria-label="Open navigation menu"
-          >
-            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
-          {/* Page Title */}
-          <div>
-            <h1 className="text-xl lg:text-2xl font-bold text-[var(--text-primary)]">
+  return (
+    <header className="sticky top-0 z-30 bg-[var(--bg-secondary)] border-b border-[var(--border-color)] px-4 sm:px-5 lg:px-6 py-3 sm:py-4 flex-shrink-0">
+      <div className="flex items-center justify-between gap-3">
+        {/* Left Section */}
+        <div className="flex items-center gap-3 min-w-0">
+          {!sidebarOpen && (
+            <button
+              onClick={onMenuClick}
+              className="p-2 rounded-lg hover:bg-[var(--bg-primary)] transition-colors flex-shrink-0"
+              aria-label="Open navigation menu"
+              aria-expanded={false}
+            >
+              <Menu className="w-5 h-5 text-[var(--text-secondary)]" />
+            </button>
+          )}
+
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-[var(--text-primary)] truncate">
               {title}
             </h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5 truncate hidden sm:block">
+              {today}
             </p>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-4">
-          {/* Theme Toggle Button */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg hover:bg-[var(--bg-primary)] transition-colors duration-200 relative group"
@@ -81,22 +76,20 @@ const Header = ({ title, onMenuClick }) => {
               {getThemeIcon()}
             </div>
 
-            {/* Theme Indicator */}
             <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border border-[var(--border-color)]">
               {theme === 'light' && (
-                <div className="w-full h-full bg-yellow-400 rounded-full"></div>
+                <div className="w-full h-full bg-yellow-400 rounded-full" />
               )}
               {theme === 'dark' && (
-                <div className="w-full h-full bg-blue-600 rounded-full"></div>
+                <div className="w-full h-full bg-blue-600 rounded-full" />
               )}
               {theme === 'pink-blue' && (
-                <div className="w-full h-full bg-gradient-to-r from-pink-500 to-blue-500 rounded-full"></div>
+                <div className="w-full h-full bg-gradient-to-r from-pink-500 to-blue-500 rounded-full" />
               )}
             </div>
           </button>
 
-          {/* Current Time Display */}
-          <div className="hidden sm:block text-sm text-[var(--text-primary)]">
+          <div className="hidden sm:block">
             <CurrentTime />
           </div>
         </div>
@@ -105,32 +98,25 @@ const Header = ({ title, onMenuClick }) => {
   );
 };
 
-
 const CurrentTime = () => {
   const [time, setTime] = React.useState(new Date());
 
   React.useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
+    const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="text-right">
-      <div className="font-mono text-lg text-[var(--text-primary)]">
+      <div className="font-mono text-base lg:text-lg text-[var(--text-primary)]">
         {time.toLocaleTimeString('en-US', {
           hour12: true,
           hour: 'numeric',
-          minute: '2-digit'
+          minute: '2-digit',
         })}
       </div>
       <div className="text-xs text-[var(--text-secondary)]">
-        {time.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric'
-        })}
+        {time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
       </div>
     </div>
   );

@@ -7,7 +7,9 @@ import {
   Flame,
   CheckCircle,
   Clock,
-  BarChart3
+  BarChart3,
+  Trophy,
+  Users
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -33,6 +35,10 @@ const Streaks = () => {
    
   useEffect(() => {
     fetchStreakData();
+
+    const refreshOnFocus = () => fetchStreakData();
+    window.addEventListener('focus', refreshOnFocus);
+    return () => window.removeEventListener('focus', refreshOnFocus);
   }, []);
 
   // Fetch streak data from API
@@ -136,6 +142,11 @@ const Streaks = () => {
   }
 
   const streakStatus = getStreakStatus(streakData.currentStreak);
+  const streakHealth = streakData.streakHealth?.score !== undefined
+    ? streakData.streakHealth
+    : { score: 0, status: 'Poor', color: '#ef4444' };
+  const totalUsers = streakData.totalUsers ?? 0;
+  const userRank = streakData.streakRanking ?? 1;
 
   return (
     <div className="space-y-6">
@@ -173,7 +184,7 @@ const Streaks = () => {
           {streakStatus.message}
         </p>
         
-        <div className="flex items-center justify-center space-x-8 text-sm">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm">
           <div>
             <div className={`font-semibold ${streakStatus.color}`}>
               {streakData.longestStreak}
@@ -184,10 +195,15 @@ const Streaks = () => {
           </div>
           <div>
             <div className={`font-semibold ${streakStatus.color}`}>
-              #{streakData.streakRanking}
+              #{userRank}
+              {totalUsers > 0 && (
+                <span className="text-sm font-normal opacity-80">
+                  {' '}/ {totalUsers}
+                </span>
+              )}
             </div>
             <div className={`${streakStatus.color} opacity-70`}>
-              Ranking
+              {totalUsers > 0 ? `of ${totalUsers} users` : 'Ranking'}
             </div>
           </div>
           <div>
@@ -238,11 +254,11 @@ const Streaks = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--text-secondary)]">Streak Health</p>
-              <p className="text-3xl font-bold" style={{ color: streakData.streakHealth.color }}>
-                {streakData.streakHealth.score}%
+              <p className="text-3xl font-bold" style={{ color: streakHealth.color }}>
+                {streakHealth.score}%
               </p>
-              <p className="text-xs" style={{ color: streakData.streakHealth.color }}>
-                {streakData.streakHealth.status}
+              <p className="text-xs" style={{ color: streakHealth.color }}>
+                {streakHealth.status}
               </p>
             </div>
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
@@ -309,23 +325,27 @@ const Streaks = () => {
             <div className="grid grid-cols-7 gap-2">
               {getChartData().map((day, index) => {
                 const maxTasks = getMaxTasks();
-                const height = Math.max((day.tasks / maxTasks) * 100, 4);
-                
+                const barHeight = day.tasks > 0
+                  ? Math.max((day.tasks / maxTasks) * 100, 12)
+                  : 8;
+
                 return (
                   <div key={index} className="text-center">
                     <div className="h-32 flex items-end justify-center mb-2">
                       <div
-                        className={`w-8 rounded-t transition-all duration-300 ${
-                          day.tasks > 0 ? 'bg-blue-500' : 'bg-[var(--bg-primary)]'
+                        className={`w-full max-w-[2rem] rounded-t transition-all duration-300 border border-[var(--border-color)] ${
+                          day.tasks > 0
+                            ? 'bg-blue-500 border-blue-400'
+                            : 'bg-[var(--bg-primary)]'
                         }`}
-                        style={{ height: `${height}%` }}
+                        style={{ height: `${barHeight}%` }}
                         title={`${day.tasks} tasks on ${formatDate(day.date)}`}
                       />
                     </div>
                     <div className="text-xs text-[var(--text-secondary)]">
                       {day.dayName}
                     </div>
-                    <div className="text-xs font-medium text-[var(--text-condary)]">
+                    <div className="text-xs font-medium text-[var(--text-secondary)]">
                       {day.tasks}
                     </div>
                   </div>
@@ -334,24 +354,24 @@ const Streaks = () => {
             </div>
           ) : (
             // 30-day heatmap view
-            <div className="grid grid-cols-10 gap-1">
+            <div className="grid grid-cols-10 gap-1.5">
               {getChartData().map((day, index) => {
                 const maxTasks = getMaxTasks();
-                const intensity = day.tasks / maxTasks;
-                
+                const intensity = maxTasks > 0 ? day.tasks / maxTasks : 0;
+
                 return (
                   <div
                     key={index}
-                    className={`w-6 h-6 rounded transition-all duration-200 ${
+                    className={`w-full aspect-square max-w-[1.75rem] rounded transition-all duration-200 border border-[var(--border-color)] ${
                       day.tasks === 0
                         ? 'bg-[var(--bg-primary)]'
                         : intensity > 0.75
-                        ? 'bg-green-600'
+                        ? 'bg-green-600 border-green-500'
                         : intensity > 0.5
-                        ? 'bg-green-500'
+                        ? 'bg-green-500 border-green-400'
                         : intensity > 0.25
-                        ? 'bg-green-400'
-                        : 'bg-green-300'
+                        ? 'bg-green-400 border-green-300'
+                        : 'bg-green-300 border-green-200'
                     }`}
                     title={`${day.tasks} tasks on ${formatDate(day.date)}`}
                   />
@@ -360,6 +380,70 @@ const Streaks = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Leaderboard */}
+      <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <Trophy className="w-6 h-6 text-yellow-500" />
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+            Streak Leaderboard
+          </h3>
+          <span className="ml-auto flex items-center gap-1 text-sm text-[var(--text-secondary)]">
+            <Users className="w-4 h-4" />
+            {totalUsers} active users
+          </span>
+        </div>
+
+        {!streakData.leaderboard?.length ? (
+          <p className="text-center text-[var(--text-secondary)] py-6">
+            No rankings yet. Complete tasks daily to climb the board!
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {streakData.leaderboard.map((entry) => (
+              <div
+                key={`${entry.rank}-${entry.name}`}
+                className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
+                  entry.isCurrentUser
+                    ? 'bg-blue-500/10 border border-blue-500/30'
+                    : 'hover:bg-[var(--bg-primary)]'
+                }`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                    entry.rank === 1
+                      ? 'bg-yellow-500/20 text-yellow-500'
+                      : entry.rank === 2
+                      ? 'bg-gray-400/20 text-gray-400'
+                      : entry.rank === 3
+                      ? 'bg-orange-500/20 text-orange-500'
+                      : 'bg-[var(--bg-primary)] text-[var(--text-secondary)]'
+                  }`}
+                >
+                  {entry.rank}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-[var(--text-primary)] truncate">
+                    {entry.name}
+                    {entry.isCurrentUser && (
+                      <span className="ml-2 text-xs text-blue-500">(You)</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Best: {entry.longestStreak} days
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  <span className="font-bold text-[var(--text-primary)]">
+                    {entry.currentStreak}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Achievements */}

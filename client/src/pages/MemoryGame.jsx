@@ -295,29 +295,29 @@ return (
   {gameStatus === 'playing' && (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="grid grid-cols-4 gap-3 sm:flex sm:items-center sm:gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{gameStats.moves}</div>
-              <div className="text-xs text-gray-600">Moves</div>
+              <div className="text-xl sm:text-2xl font-bold text-blue-600">{gameStats.moves}</div>
+              <div className="text-xs text-[var(--text-secondary)]">Moves</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{gameStats.matches}</div>
-              <div className="text-xs text-gray-600">Matches</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-600">{gameStats.matches}</div>
+              <div className="text-xs text-[var(--text-secondary)]">Matches</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{formatTime(gameStats.timeElapsed)}</div>
-              <div className="text-xs text-gray-600">Time</div>
+              <div className="text-xl sm:text-2xl font-bold text-purple-600">{formatTime(gameStats.timeElapsed)}</div>
+              <div className="text-xs text-[var(--text-secondary)]">Time</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{gameStats.score}</div>
-              <div className="text-xs text-gray-600">Score</div>
+              <div className="text-xl sm:text-2xl font-bold text-orange-600">{gameStats.score}</div>
+              <div className="text-xs text-[var(--text-secondary)]">Score</div>
             </div>
           </div>
           <button
             onClick={resetToMenu}
-            className="bg-[var(--bg-primary)] text-[var(--text-secondary)] px-4 py-2 rounded-lg flex items-center space-x-2 border border[var(--border-color)] hover:bg-[var(--bg-secondary)]"
+            className="bg-[var(--bg-primary)] text-[var(--text-secondary)] px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 border border-[var(--border-color)] hover:bg-[var(--bg-secondary)] text-sm"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset</span>
@@ -326,12 +326,12 @@ return (
       </div>
 
       {/* Board */}
-      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border p-6">
+      <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] p-3 sm:p-6">
         <div
-          className="grid gap-3 mx-auto"
+          className="grid gap-2 sm:gap-3 w-full mx-auto"
           style={{
             gridTemplateColumns: `repeat(${selectedDifficulty.gridSize}, minmax(0, 1fr))`,
-            maxWidth: `${selectedDifficulty.gridSize * 80}px`
+            maxWidth: `${selectedDifficulty.gridSize * 80}px`,
           }}
         >
           {cards.map((card) => (
@@ -364,8 +364,8 @@ return (
     <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border p-8 text-center">
       <div className="mb-6">
         <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations! 🎉</h2>
-        <p className="text-gray-600">You completed the {selectedDifficulty.name} level!</p>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Congratulations!</h2>
+        <p className="text-[var(--text-secondary)]">You completed the {selectedDifficulty.name} level!</p>
       </div>
 
       <div className="flex items-center justify-center space-x-1 mb-6">

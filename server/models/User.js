@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
+
+  profilePhoto: {
+    type: String,
+    default: null,
+  },
   
   // User role for access control
   role: {
@@ -113,6 +118,32 @@ const userSchema = new mongoose.Schema({
         min: 1,
         max: 30
       }
+    },
+    notifications: {
+      emailNotifications: {
+        type: Boolean,
+        default: true
+      },
+      taskReminders: {
+        type: Boolean,
+        default: true
+      },
+      streakReminders: {
+        type: Boolean,
+        default: true
+      }
+    }
+  },
+
+  // Tracks when notification emails were last sent (prevents duplicates)
+  notificationMeta: {
+    lastStreakReminderAt: {
+      type: Date,
+      default: null
+    },
+    lastWeeklyDigestAt: {
+      type: Date,
+      default: null
     }
   },
   
@@ -166,66 +197,86 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 /**
+ * Instance Method: Validate Current Streak
+ * Resets streak if the user missed more than one day of task activity
+ */
+userSchema.methods.validateCurrentStreak = function() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (!this.streaks.lastTaskCompletionDate) {
+    if (this.streaks.currentStreak > 0) {
+      this.streaks.currentStreak = 0;
+    }
+    this.streaks.tasksCompletedToday = 0;
+    return;
+  }
+
+  const last = new Date(this.streaks.lastTaskCompletionDate);
+  last.setHours(0, 0, 0, 0);
+  const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 1) {
+    this.streaks.currentStreak = 0;
+  }
+
+  if (diffDays >= 1) {
+    this.streaks.tasksCompletedToday = 0;
+  }
+};
+
+/**
  * Instance Method: Update Login Streak
- * Updates user's login streak based on current date
- * Maintains streak if logged in consecutive days, resets if gap exists
+ * Records login and validates streak expiry (streak is earned via tasks)
  */
 userSchema.methods.updateLoginStreak = function() {
+  this.validateCurrentStreak();
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Reset to start of day
-  
-  const lastLogin = this.streaks.lastLoginDate;
-  
-  if (!lastLogin) {
-    // First login
+  today.setHours(0, 0, 0, 0);
+  this.streaks.lastLoginDate = today;
+};
+
+/**
+ * Instance Method: Update Task Completion Streak
+ * Updates daily counters and consecutive-day streak on task completion
+ */
+userSchema.methods.updateTaskCompletion = function() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const lastTaskDate = this.streaks.lastTaskCompletionDate;
+
+  if (!lastTaskDate) {
     this.streaks.currentStreak = 1;
-    this.streaks.longestStreak = 1;
-    this.streaks.lastLoginDate = today;
+    this.streaks.longestStreak = Math.max(1, this.streaks.longestStreak);
+    this.streaks.tasksCompletedToday = 1;
+    this.streaks.lastTaskCompletionDate = today;
   } else {
-    const lastLoginDate = new Date(lastLogin);
-    lastLoginDate.setHours(0, 0, 0, 0);
-    
-    const diffTime = today - lastLoginDate;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    
-    if (diffDays === 1) {
-      // Consecutive day login - increment streak
+    const last = new Date(lastTaskDate);
+    last.setHours(0, 0, 0, 0);
+    const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      this.streaks.tasksCompletedToday += 1;
+    } else if (diffDays === 1) {
       this.streaks.currentStreak += 1;
       this.streaks.longestStreak = Math.max(
         this.streaks.currentStreak,
         this.streaks.longestStreak
       );
-      this.streaks.lastLoginDate = today;
-    } else if (diffDays > 1) {
-      // Gap in login - reset streak
+      this.streaks.tasksCompletedToday = 1;
+      this.streaks.lastTaskCompletionDate = today;
+    } else {
       this.streaks.currentStreak = 1;
-      this.streaks.lastLoginDate = today;
+      this.streaks.longestStreak = Math.max(
+        1,
+        this.streaks.longestStreak
+      );
+      this.streaks.tasksCompletedToday = 1;
+      this.streaks.lastTaskCompletionDate = today;
     }
-    // If diffDays === 0, it's the same day, no change needed
   }
-};
 
-/**
- * Instance Method: Update Task Completion Streak
- * Updates daily task completion tracking
- * Resets daily counter if it's a new day
- */
-userSchema.methods.updateTaskCompletion = function() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const lastTaskDate = this.streaks.lastTaskCompletionDate;
-  
-  if (!lastTaskDate || lastTaskDate < today) {
-    // New day - reset daily counter
-    this.streaks.tasksCompletedToday = 1;
-    this.streaks.lastTaskCompletionDate = today;
-  } else {
-    // Same day - increment counter
-    this.streaks.tasksCompletedToday += 1;
-  }
-  
-  // Always increment total tasks completed
   this.streaks.totalTasksCompleted += 1;
 };
 

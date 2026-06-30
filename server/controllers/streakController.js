@@ -1,13 +1,24 @@
 import User from '../models/User.js';
 import Task from '../models/Task.js';
 
+const ACTIVE_USER_FILTER = { isActive: { $ne: false } };
 
- // Get User Streaks and Statistics
- // Returns comprehensive streak information and progress data
+const getLocalDateKey = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getChartTimezone = () =>
+  process.env.APP_TIMEZONE ||
+  Intl.DateTimeFormat().resolvedOptions().timeZone ||
+  'UTC';
 
 export const getUserStreaks = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('streaks');
+    const user = await User.findById(req.user._id);
     
     if (!user) {
       return res.status(404).json({
@@ -15,6 +26,10 @@ export const getUserStreaks = async (req, res) => {
         message: 'User not found'
       });
     }
+
+    // Expire stale streaks before calculating rank
+    user.validateCurrentStreak();
+    await user.save({ validateBeforeSave: false });
     
     // Calculate additional streak statistics
     const today = new Date();
@@ -25,13 +40,17 @@ export const getUserStreaks = async (req, res) => {
     
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(today.getDate() - 30);
-    
+
+    const chartTimezone = getChartTimezone();
+
     // Get task completion data for charts/graphs
     const [
       tasksLast7Days,
       tasksLast30Days,
       totalTasksAllTime,
-      streakRanking
+      usersAbove,
+      totalUsers,
+      topUsers
     ] = await Promise.all([
       // Tasks completed in last 7 days
       Task.aggregate([
@@ -47,7 +66,8 @@ export const getUserStreaks = async (req, res) => {
             _id: {
               $dateToString: {
                 format: '%Y-%m-%d',
-                date: '$completedAt'
+                date: '$completedAt',
+                timezone: chartTimezone
               }
             },
             count: { $sum: 1 }
@@ -70,7 +90,8 @@ export const getUserStreaks = async (req, res) => {
             _id: {
               $dateToString: {
                 format: '%Y-%m-%d',
-                date: '$completedAt'
+                date: '$completedAt',
+                timezone: chartTimezone
               }
             },
             count: { $sum: 1 }
@@ -85,11 +106,53 @@ export const getUserStreaks = async (req, res) => {
         completed: true
       }),
       
-      // User's streak ranking (compared to other users)
+      // Users ranked above current user (by current streak, then longest streak)
       User.countDocuments({
-        'streaks.currentStreak': { $gt: user.streaks.currentStreak }
-      })
+        ...ACTIVE_USER_FILTER,
+        $or: [
+          { 'streaks.currentStreak': { $gt: user.streaks.currentStreak } },
+          {
+            'streaks.currentStreak': user.streaks.currentStreak,
+            'streaks.longestStreak': { $gt: user.streaks.longestStreak }
+          }
+        ]
+      }),
+
+      // Total active users on the platform
+      User.countDocuments(ACTIVE_USER_FILTER),
+
+      // Top users for leaderboard
+      User.find(ACTIVE_USER_FILTER)
+        .select('name streaks.currentStreak streaks.longestStreak')
+        .sort({
+          'streaks.currentStreak': -1,
+          'streaks.longestStreak': -1,
+          name: 1
+        })
+        .limit(10)
+        .lean()
     ]);
+
+    const streakRanking = Math.min(usersAbove + 1, Math.max(totalUsers, 1));
+
+    const leaderboard = [];
+    let lastRank = 0;
+    for (let i = 0; i < topUsers.length; i++) {
+      const entry = topUsers[i];
+      const rank =
+        i === 0 ||
+        entry.streaks.currentStreak !== topUsers[i - 1].streaks.currentStreak
+          ? i + 1
+          : lastRank;
+      lastRank = rank;
+      leaderboard.push({
+        rank,
+        name: entry.name,
+        currentStreak: entry.streaks.currentStreak,
+        longestStreak: entry.streaks.longestStreak,
+        isCurrentUser: entry._id.toString() === req.user._id.toString()
+      });
+    }
     
     // Calculate streak achievements/badges
     const achievements = calculateAchievements(user.streaks, totalTasksAllTime);
@@ -99,7 +162,7 @@ export const getUserStreaks = async (req, res) => {
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = getLocalDateKey(date);
       
       const dayData = tasksLast7Days.find(d => d._id === dateStr);
       last7DaysData.push({
@@ -114,7 +177,7 @@ export const getUserStreaks = async (req, res) => {
     for (let i = 29; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = getLocalDateKey(date);
       
       const dayData = tasksLast30Days.find(d => d._id === dateStr);
       last30DaysData.push({
@@ -135,7 +198,9 @@ export const getUserStreaks = async (req, res) => {
         tasksCompletedToday: user.streaks.tasksCompletedToday,
         lastLoginDate: user.streaks.lastLoginDate,
         lastTaskCompletionDate: user.streaks.lastTaskCompletionDate,
-        streakRanking: streakRanking + 1, // +1 because ranking starts from 1
+        streakRanking,
+        totalUsers,
+        leaderboard,
         achievements,
         streakHealth,
         chartData: {
@@ -175,7 +240,7 @@ export const updateStreak = async (req, res) => {
       });
     }
     
-    // Update login streak
+    // Update login streak validation
     user.updateLoginStreak();
     await user.save({ validateBeforeSave: false });
     
@@ -314,7 +379,15 @@ function calculateAchievements(streaks, totalTasks) {
  // Returns a score from 0-100 based on consistency
  
 function calculateStreakHealth(last30DaysData) {
-  if (last30DaysData.length === 0) return 0;
+  if (!last30DaysData || last30DaysData.length === 0) {
+    return {
+      score: 0,
+      status: 'Poor',
+      color: '#ef4444',
+      daysActive: 0,
+      totalDays: 0
+    };
+  }
   
   const daysWithTasks = last30DaysData.filter(day => day.tasks > 0).length;
   const consistencyScore = Math.round((daysWithTasks / last30DaysData.length) * 100);
@@ -345,12 +418,16 @@ function calculateStreakHealth(last30DaysData) {
 // Helper function to find the most productive day of the week
  
 function getMostProductiveDay(last7DaysData) {
-  if (last7DaysData.length === 0) return null;
-  
-  const mostProductiveDay = last7DaysData.reduce((max, day) => 
+  if (!last7DaysData || last7DaysData.length === 0) return null;
+
+  const mostProductiveDay = last7DaysData.reduce((max, day) =>
     day.tasks > max.tasks ? day : max
   );
-  
+
+  if (mostProductiveDay.tasks === 0) {
+    return { day: 'N/A', tasks: 0, date: null };
+  }
+
   return {
     day: mostProductiveDay.dayName,
     tasks: mostProductiveDay.tasks,

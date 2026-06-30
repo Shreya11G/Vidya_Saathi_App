@@ -306,7 +306,7 @@ const Links = () => {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="inline-flex items-center space-x-2 bg-[var(--primary-color)] hover:opacity-90 text-white px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>Add Link</span>
@@ -315,8 +315,7 @@ const Links = () => {
 
       {/* Search and Filters */}
       <div
-        className="bg-[var(--bg-secondary)] rounded-xl shadow-sm borderborder border-[var(--border-color)]
- p-6"
+        className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
@@ -371,11 +370,11 @@ const Links = () => {
       <div className="space-y-4">
         {sortedLinks.length === 0 ? (
           <div className="bg-[var(--bg-secondary)] rounded-xl shadow-sm border border-[var(--border-color)] p-12 text-center">
-            <div className="w-16 h-16 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <Globe className="w-8 h-8 text-blue-500" />
+            <div className="w-16 h-16 bg-[var(--bg-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Globe className="w-8 h-8 text-[var(--primary-color)]" />
             </div>
 
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               No links found
             </h3>
             <p className="text-[var(--text-secondary)] mb-4">
@@ -386,7 +385,7 @@ const Links = () => {
             {!searchTerm && filterCategory === "all" && !showFavoritesOnly && (
               <button
                 onClick={() => setShowAddModal(true)}
-                className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center space-x-2 bg-[var(--primary-color)] hover:opacity-90 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Your First Link</span>
@@ -405,7 +404,7 @@ const Links = () => {
                   {/* Link Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2">
-                      <CategoryIcon className="w-5 h-5 text-blue-500" />
+                      <CategoryIcon className="w-5 h-5 text-[var(--primary-color)]" />
                       {link.isFavorite && (
                         <Heart className="w-4 h-4 text-red-500 fill-current" />
                       )}
@@ -415,7 +414,7 @@ const Links = () => {
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleCopyUrl(link.url)}
-                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-gray-500 hover:text-blue-600 transition-colors"
+                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
                         title="Copy URL"
                       >
                         <Copy className="w-4 h-4" />
@@ -425,7 +424,7 @@ const Links = () => {
                         className={`p-1 rounded hover:bg-[var(--bg-primary)] transition-colors ${
                           link.isFavorite
                             ? "text-red-500"
-                            : "text-gray-500 hover:text-red-500"
+                            : "text-[var(--text-secondary)] hover:text-red-500"
                         }`}
                         title={
                           link.isFavorite
@@ -437,14 +436,14 @@ const Links = () => {
                       </button>
                       <button
                         onClick={() => handleEditLink(link)}
-                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-gray-500 hover:text-blue-600 transition-colors"
+                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteLink(link._id)}
-                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-gray-500 hover:text-red-600 transition-colors"
+                        className="p-1 rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-red-600 transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -462,7 +461,7 @@ const Links = () => {
                         {link.description}
                       </p>
                     )}
-                    <p className="text-xs text-blue-600 dark:text-blue-400 truncate">
+                    <p className="text-xs text-[var(--secondary-color)] truncate">
                       {link.url}
                     </p>
                   </div>
@@ -498,7 +497,7 @@ const Links = () => {
                   {/* Open Link Button */}
                   <button
                     onClick={() => handleLinkClick(link)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="w-full bg-[var(--primary-color)] hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
                   >
                     <ExternalLink className="w-4 h-4" />
                     <span>Open Link</span>
@@ -524,7 +523,7 @@ const Links = () => {
                     setShowAddModal(false);
                     handleCancelEdit();
                   }}
-                  className="text-gray-400 hover:text-[var(--text-primary)]"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -629,13 +628,13 @@ const Links = () => {
                       {formData.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 text-sm px-2 py-1 rounded-full"
+                          className="inline-flex items-center bg-[var(--bg-primary)] text-[var(--secondary-color)] text-sm px-2 py-1 rounded-full border border-[var(--border-color)]"
                         >
                           #{tag}
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+                            className="ml-1 text-[var(--secondary-color)] hover:text-[var(--primary-color)]"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -649,7 +648,7 @@ const Links = () => {
                 <div className="flex space-x-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
+                    className="flex-1 bg-[var(--primary-color)] hover:opacity-90 text-white py-2 px-4 rounded-lg transition-colors"
                   >
                     {editingLink ? "Update Link" : "Add Link"}
                   </button>

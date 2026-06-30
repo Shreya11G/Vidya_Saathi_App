@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -14,9 +16,17 @@ import linkRoutes from './routes/linkRoutes.js';
 import streakRoutes from './routes/streakRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
+import paragraphRoutes from './routes/paragraphRoutes.js';
+import documentRoutes from './routes/documentRoutes.js';
+import Document from './models/Document.js';
+import { startNotificationScheduler } from './jobs/notificationScheduler.js';
+import { isSmtpConfigured, warmUpSmtp } from './utils/emailService.js';
+import { isOtpEnabled } from './utils/otpConfig.js';
 
-// Load environment variables
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load environment variables from server/.env
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,11 +73,25 @@ app.use(cookieParser());
  * Connects to MongoDB database with proper error handling
  */
 const connectDB = async () => {
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    console.error('Database connection failed: MONGODB_URI is not set.');
+    console.error('Create server/.env from .env.example and set your MongoDB connection string.');
+    process.exit(1);
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(uri);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    await Document.fixNullShareIds().catch(() => {});
+    startNotificationScheduler();
+    if (isSmtpConfigured()) {
+      warmUpSmtp().catch(() => {});
+    }
   } catch (error) {
     console.error('Database connection failed:', error.message);
+    console.error('Check that MongoDB is running locally, or update MONGODB_URI in server/.env with a valid Atlas URI.');
     process.exit(1);
   }
 };
@@ -85,6 +109,8 @@ app.use('/api/links', linkRoutes);
 app.use('/api/streaks', streakRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/paragraphs', paragraphRoutes);
+app.use('/api/documents', documentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -126,6 +152,16 @@ app.listen(PORT, () => {
   console.log(` VidyaSathi Server is running on port ${PORT}`);
   console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(` Client URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+  console.log(
+    isSmtpConfigured()
+      ? ` Email: SMTP configured (${process.env.SMTP_USER}) — real emails enabled`
+      : ' Email: SMTP not configured — OTP/notifications log to terminal only'
+  );
+  console.log(
+    isOtpEnabled()
+      ? ' Auth: OTP verification ENABLED (OTP_ENABLED=true)'
+      : ' Auth: OTP verification DISABLED (set OTP_ENABLED=true to enable)'
+  );
 });
 
 //shutdown handling
