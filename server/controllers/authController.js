@@ -35,13 +35,13 @@ const generateTokenAndSetCookie = (res, userId) => {
   );
   
   // Set HTTP-only cookie with security options
-  res.cookie('token', token, {
-    httpOnly: true, // Prevents client-side JavaScript access
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: 'lax', // CSRF protection
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-    path: '/' // Available on all paths
-  });
+res.cookie('token', token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: '/',
+});
   
   return token;
 };
@@ -371,12 +371,12 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     // Clear the authentication cookie
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/'
-    });
+   res.clearCookie('token', {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  path: '/',
+});
     
     res.status(200).json({
       success: true,
@@ -584,12 +584,12 @@ export const deleteAccount = async (req, res) => {
     await User.findByIdAndDelete(req.user._id);
     
     // Clear authentication cookie
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/'
-    });
+   res.clearCookie('token', {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  path: '/',
+});
     
     res.status(200).json({
       success: true,
